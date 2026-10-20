@@ -1,6 +1,6 @@
 # ADR 0001 — Fundação do Tavvo Restaurants
 
-Estado: aceito para implementação em 19/10/2026. Validação de funcionamento permanece pendente dos testes.
+Estado: aceito para implementação em 19/10/2026. Fluxo do MVP validado localmente e na CI em 20/10/2026; [evidências e limites](../verification/2026-10-20.md).
 
 ## Contexto
 

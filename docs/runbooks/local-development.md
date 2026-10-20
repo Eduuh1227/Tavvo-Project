@@ -107,4 +107,4 @@ O lock de runtime exclui pytest, Ruff e Moto. `requirements-dev.lock` inclui o r
 - Porta ocupada: pare a instância local conflitante antes de iniciar outra. As portas padrão são 55432, 8000, 9000, 9001, 1025 e 8025.
 - Erro de CSRF: confirme o hostname, o proxy do Vite e `CSRF_TRUSTED_ORIGINS`; não desative a proteção.
 
-O Compose completo não foi executado nesta estação, pois Docker não está instalado. A validação YAML local não comprova build nem startup; consulte os resultados de CI e a evidência de execução para o estado real dos testes.
+Docker não está instalado nesta estação Windows. O Compose completo foi compilado e executado em Ubuntu no [GitHub Actions](https://github.com/Eduuh1227/Tavvo-Project/actions/runs/39478968836), com os três testes de navegador aprovados usando MinIO real e comparação dos dados após reiniciar os serviços. Consulte a [evidência de execução](../verification/2026-10-20.md) para os limites do ensaio.

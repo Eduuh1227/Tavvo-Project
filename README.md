@@ -55,9 +55,9 @@ Reinicie os serviços preservando seus dados e execute `python scripts/verify_pe
 
 ## Estado e operação
 
-O fluxo local integrado passou em PostgreSQL real: 40 testes de backend e três testes de navegador, além de comparação dos dados após reiniciar aplicações e banco. O contrato OpenAPI validado gera os tipos compartilhados dos frontends. Consulte [evidências e limites da validação](docs/verification/2026-10-20.md).
+O fluxo integrado passou localmente e na [CI com Docker Compose](https://github.com/Eduuh1227/Tavvo-Project/actions/runs/39478968836): 40 testes de backend e três testes de navegador, além de comparação dos dados após reiniciar serviços e banco. O contrato OpenAPI validado gera os tipos compartilhados dos frontends. Consulte [evidências e limites da validação](docs/verification/2026-10-20.md).
 
-Não há deploy de produção, infraestrutura contratada nem credenciais de produção. Docker não está instalado nesta estação: o Compose completo tem um job de CI dedicado, cujo resultado precisa ser conferido no GitHub. Os testes locais de imagens usaram Moto como emulador S3; não comprovam a operação de um provedor de produção.
+O Compose completo foi executado no GitHub Actions com PostgreSQL, MinIO, Gunicorn e Mailpit; os testes de imagem no navegador usaram esse MinIO real. Os testes locais de storage usaram Moto como emulador S3. Não há deploy de produção, infraestrutura contratada nem credenciais de produção; SMTP/S3 de fornecedores externos ainda precisam de homologação.
 
 - [Publicação manual e observabilidade](docs/runbooks/production.md)
 - [Backup e restauração](docs/runbooks/backup-restore.md)
