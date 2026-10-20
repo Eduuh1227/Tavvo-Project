@@ -96,7 +96,9 @@ jobs:
           public_pid=$!
           trap 'kill "$admin_pid" "$public_pid" 2>/dev/null || true' EXIT
           for url in http://127.0.0.1:8000/ready/ http://localhost:5173 http://localhost:3000/r/restaurante-a; do
-            curl --silent --output /dev/null --retry 30 --retry-delay 2 --retry-connrefused "$url"
+            # A newly opened Docker port may reset the connection before Gunicorn is ready.
+            # The unseeded public page may legitimately return 404 during this warmup.
+            curl --silent --show-error --output /dev/null --retry 30 --retry-delay 2 --retry-all-errors --connect-timeout 2 --max-time 15 "$url"
           done
           curl --fail --silent http://127.0.0.1:8000/ready/
           python scripts/seed_demo.py
