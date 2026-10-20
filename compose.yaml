@@ -1,0 +1,125 @@
+name: tavvo-local
+
+x-runtime-environment: &runtime-environment
+  TAVVO_ENV: development
+  DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?Run python scripts/configure_local.py first}
+  TAVVO_MFA_ENCRYPTION_KEY: ${TAVVO_MFA_ENCRYPTION_KEY:?Missing MFA encryption key}
+  DATABASE_URL: postgresql://tavvo_app:${TAVVO_DB_PASSWORD:?Missing runtime password}@db:5432/tavvo
+  DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,api
+  CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+  TAVVO_ADMIN_ORIGIN: ${TAVVO_ADMIN_ORIGIN:-http://localhost:5173}
+  TAVVO_PUBLIC_ORIGIN: ${TAVVO_PUBLIC_ORIGIN:-http://localhost:3000}
+  S3_ENDPOINT_URL: http://storage:9000
+  S3_BUCKET: ${S3_BUCKET:-tavvo-images}
+  S3_REGION: ${S3_REGION:-us-east-1}
+  S3_ACCESS_KEY: ${S3_ACCESS_KEY:-local-development}
+  S3_SECRET_KEY: ${S3_SECRET_KEY:?Missing local object storage secret}
+  EMAIL_HOST: mailpit
+  EMAIL_PORT: "1025"
+  DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-Tavvo <no-reply@localhost>}
+
+x-api-image: &api-image
+  image: tavvo-api:local
+  build:
+    context: .
+    dockerfile: infra/api.Dockerfile
+
+services:
+  db:
+    image: postgres:18-bookworm
+    environment:
+      POSTGRES_DB: tavvo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Missing owner password}
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    ports: ["127.0.0.1:55432:5432"]
+    volumes: ["postgres_data:/var/lib/postgresql"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d tavvo"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  db-bootstrap:
+    <<: *api-image
+    command: ["python", "infra/provision_database.py"]
+    environment:
+      MIGRATION_DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/tavvo
+      TAVVO_DB_PASSWORD: ${TAVVO_DB_PASSWORD}
+    depends_on:
+      db: {condition: service_healthy}
+    restart: "no"
+
+  migrate:
+    <<: *api-image
+    command: ["python", "scripts/manage.py", "migrate", "--noinput"]
+    environment:
+      <<: *runtime-environment
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD}@db:5432/tavvo
+    depends_on:
+      db-bootstrap: {condition: service_completed_successfully}
+    restart: "no"
+
+  storage:
+    build:
+      context: .
+      dockerfile: infra/minio.Dockerfile
+    image: tavvo-minio:local
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:-local-development}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY}
+    volumes: ["storage_data:/data"]
+    ports: ["127.0.0.1:9000:9000", "127.0.0.1:9001:9001"]
+    restart: unless-stopped
+
+  storage-init:
+    <<: *api-image
+    command: ["python", "infra/init_storage.py"]
+    environment:
+      S3_ENDPOINT_URL: http://storage:9000
+      S3_BUCKET: ${S3_BUCKET:-tavvo-images}
+      S3_REGION: ${S3_REGION:-us-east-1}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:-local-development}
+      S3_SECRET_KEY: ${S3_SECRET_KEY}
+    depends_on:
+      storage: {condition: service_started}
+    restart: "no"
+
+  mailpit:
+    image: axllent/mailpit:v1.27.4
+    environment:
+      MP_DATABASE: /data/mailpit.db
+      MP_MAX_MESSAGES: "500"
+    ports: ["127.0.0.1:1025:1025", "127.0.0.1:8025:8025"]
+    volumes: ["mailpit_data:/data"]
+    restart: unless-stopped
+
+  api:
+    <<: *api-image
+    environment: *runtime-environment
+    ports: ["127.0.0.1:8000:8000"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      storage-init: {condition: service_completed_successfully}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready/', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    restart: unless-stopped
+
+  auth-mail:
+    <<: *api-image
+    command: ["python", "infra/mail_worker.py"]
+    environment: *runtime-environment
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      mailpit: {condition: service_started}
+    restart: unless-stopped
+    stop_grace_period: 30s
+
+volumes:
+  postgres_data:
+  storage_data:
+  mailpit_data:
