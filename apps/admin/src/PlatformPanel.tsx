@@ -1,0 +1,17 @@
+import {useState} from 'react';
+import {request, type Restaurant, type User, type Membership} from '@tavvo/api-client';
+import {Crud, Form, Action, type Field} from './ui';
+
+const restaurantFields: Field[] = [{key:'name',label:'Nome',required:true},{key:'slug',label:'Slug público',required:true},{key:'status',label:'Status',type:'select',required:true,options:[{value:'active',label:'Ativo'},{value:'inactive',label:'Inativo'}]}];
+export function PlatformPanel({onRestaurant}: {onRestaurant: (restaurant:Restaurant)=>void}) {
+  const [tab,setTab]=useState('restaurants');
+  return <><h1>Administração Tavvo</h1><nav aria-label="Administração central"><button className={tab==='restaurants'?'':'secondary'} onClick={()=>setTab('restaurants')}>Restaurantes</button><button className={tab==='users'?'':'secondary'} onClick={()=>setTab('users')}>Usuários</button></nav>{tab==='restaurants' ? <Crud<Restaurant> title="Restaurantes" path="/v1/platform/restaurants/" fields={restaurantFields} initial={{status:'active'}} describe={item=><><strong>{item.name}</strong><p>{item.slug} · {item.status}</p></>} extras={item=><><button className="secondary" onClick={()=>onRestaurant(item)}>Administrar restaurante</button><Memberships restaurant={item}/></>}/> : <Users/>}</>;
+}
+function Users(){
+  const [revision,setRevision]=useState(0); const [creating,setCreating]=useState(false);
+  return <><button onClick={()=>setCreating(value=>!value)}>{creating ? 'Cancelar cadastro' : 'Cadastrar usuário'}</button>{creating ? <section><h2>Novo usuário</h2><Form fields={[{key:'email',label:'E-mail',type:'email',required:true},{key:'name',label:'Nome',required:true},{key:'password',label:'Senha inicial',type:'password',required:true},{key:'is_platform_admin',label:'Administrador Tavvo (MFA obrigatório)',type:'checkbox'}]} submit={async values=>{await request('/v1/platform/users/','POST',values);setCreating(false);setRevision(value=>value+1);}}/></section> : null}<Crud<User> key={revision} title="Usuários existentes" canCreate={false} path="/v1/platform/users/" fields={[{key:'name',label:'Nome',required:true},{key:'is_active',label:'Ativo',type:'checkbox'},{key:'is_platform_admin',label:'Administrador Tavvo',type:'checkbox'}]} describe={item=><><strong>{item.name}</strong><p>{item.email} · {item.is_active ? 'Ativo' : 'Inativo'} · {item.is_platform_admin ? 'Administrador Tavvo' : 'Usuário de restaurante'}</p><small>ID para associação: {item.id}</small></>} extras={item=><Action run={()=>request(`/v1/platform/users/${item.id}/revoke-sessions/`,'POST',{})}>Revogar todas as sessões</Action>}/></>;
+}
+function Memberships({restaurant}:{restaurant:Restaurant}) {
+  const [open,setOpen]=useState(false);
+  return <div><button className="secondary" onClick={()=>setOpen(value=>!value)}>{open ? 'Fechar associações' : 'Usuários associados'}</button>{open ? <Crud<Membership> title={`Associações — ${restaurant.name}`} path={`/v1/platform/restaurants/${restaurant.id}/memberships/`} fields={[{key:'user',label:'ID do usuário',required:true},{key:'role',label:'Papel',type:'select',required:true,options:[{value:'manager',label:'Gestor'},{value:'staff',label:'Funcionário'}]},{key:'status',label:'Acesso',type:'select',required:true,options:[{value:'active',label:'Ativo'},{value:'revoked',label:'Revogado'}]}]} initial={{role:'manager',status:'active'}} describe={item=><><strong>{item.email}</strong><p>{item.role} · {item.status}</p></>}/> : null}</div>;
+}

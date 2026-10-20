@@ -1,0 +1,16 @@
+{
+  "name": "tavvo-restaurants",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": ["apps/admin", "apps/public-reference", "packages/api-client"],
+  "engines": {"node": ">=22.12.0"},
+  "scripts": {
+    "dev:admin": "npm run dev -w @tavvo/admin",
+    "dev:public": "npm run dev -w @tavvo/public-reference",
+    "build": "npm run build -w @tavvo/admin && npm run build -w @tavvo/public-reference",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test:e2e": "playwright test",
+    "generate:api": "openapi-typescript docs/api/openapi.yaml -o packages/api-client/src/schema.d.ts"
+  },
+  "devDependencies": {"@playwright/test": "^1.58.0", "openapi-typescript": "^7.10.1", "typescript": "^5.9.3", "@types/node": "^24.0.0"}
+}
