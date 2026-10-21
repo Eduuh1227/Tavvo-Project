@@ -4,6 +4,7 @@ Only the initial platform account is bootstrapped directly. Everything else
 uses authentication, MFA, authorization and the same endpoints as the panels.
 Credentials are written to ignored .local/ and never printed.
 """
+import argparse
 import base64
 import json
 import os
@@ -11,6 +12,7 @@ import secrets
 import sys
 import time
 from pathlib import Path
+from urllib.parse import urlparse
 
 import requests
 
@@ -25,17 +27,28 @@ from django_otp.oath import TOTP
 from identity.models import User, TotpDevice
 from identity.security import cipher
 
-if settings.ENVIRONMENT != 'development':
-    raise SystemExit('Demo data is only allowed in development.')
-base = os.getenv('TAVVO_API_URL', 'http://127.0.0.1:8000').rstrip('/')
-if not base.startswith(('http://127.0.0.1:', 'http://localhost:')):
-    raise SystemExit('Demo provisioning is restricted to loopback.')
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--remote-demo', help='Explicit HTTPS origin of a dedicated Vercel demo, never production.')
+args = parser.parse_args()
+base = (args.remote_demo or os.getenv('TAVVO_API_URL', 'http://127.0.0.1:8000')).rstrip('/')
+origin = urlparse(base)
+if args.remote_demo:
+    if (settings.ENVIRONMENT != 'demo' or origin.scheme != 'https'
+            or not (origin.hostname or '').endswith('.vercel.app')
+            or origin.path or origin.query or origin.fragment or origin.username):
+        raise SystemExit('Remote seeding requires TAVVO_ENV=demo and an explicit Vercel HTTPS origin.')
+else:
+    if settings.ENVIRONMENT != 'development' or origin.scheme != 'http' or origin.hostname not in ('127.0.0.1', 'localhost'):
+        raise SystemExit('Local seeding requires development and loopback; use --remote-demo for a dedicated demo.')
+prefix = 'vercel-demo' if args.remote_demo else 'demo'
 local = ROOT / '.local'
 local.mkdir(exist_ok=True)
-credentials_path = local / 'demo-credentials.json'
+credentials_path = local / f'{prefix}-credentials.json'
 old = json.loads(credentials_path.read_text()) if credentials_path.exists() else {}
 password = os.getenv('TAVVO_E2E_PASSWORD') or old.get('password') or secrets.token_urlsafe(24)
 admin_email = 'admin@example.test'
+credentials_path.write_text(json.dumps({**old, 'password': password, 'admin_email': admin_email,
+    'manager_a': 'gestor-a@example.test', 'manager_b': 'gestor-b@example.test'}))
 admin, created = User.objects.get_or_create(email=admin_email, defaults={'name': 'Tavvo Demo', 'is_platform_admin': True})
 if created:
     admin.set_password(password)
@@ -43,7 +56,7 @@ if created:
 
 
 def request(session, method, path, data=None, files=None):
-    headers = {'X-CSRFToken': session.cookies.get('csrftoken', '')}
+    headers = {'X-CSRFToken': session.cookies.get('csrftoken', ''), 'Origin': base}
     response = session.request(method, base + '/v1/' + path, json=data if not files else None,
                                files=files, headers=headers, timeout=30)
     if response.status_code >= 400:
@@ -53,6 +66,9 @@ def request(session, method, path, data=None, files=None):
 
 def login(email, otp=None):
     session = requests.Session()
+    share = os.getenv('TAVVO_DEMO_SHARE_TOKEN')
+    if share and args.remote_demo:
+        session.get(base, params={'_vercel_share': share}, timeout=30).raise_for_status()
     request(session, 'GET', 'auth/csrf/')
     result = request(session, 'POST', 'auth/login/', {'email': email, 'password': password, **({'otp': otp} if otp else {})})
     return session, result
@@ -120,13 +136,13 @@ for suffix in ('a', 'b'):
 cookie_state = {'cookies': [], 'origins': []}
 for cookie in platform.cookies:
     cookie_state['cookies'].append({
-        'name': cookie.name, 'value': cookie.value, 'domain': 'localhost', 'path': '/',
+        'name': cookie.name, 'value': cookie.value, 'domain': origin.hostname if args.remote_demo else 'localhost', 'path': '/',
         'expires': cookie.expires or -1, 'httpOnly': cookie.name == 'tavvo_session',
-        'secure': False, 'sameSite': 'Lax',
+        'secure': bool(args.remote_demo), 'sameSite': 'Lax',
     })
-(local / 'admin-storage-state.json').write_text(json.dumps(cookie_state))
+(local / ('vercel-demo-admin-storage-state.json' if args.remote_demo else 'admin-storage-state.json')).write_text(json.dumps(cookie_state))
 credentials_path.write_text(json.dumps({**old, 'password': password, 'admin_email': admin_email,
                                        'manager_a': 'gestor-a@example.test', 'manager_b': 'gestor-b@example.test'}))
-(local / 'demo-records.json').write_text(json.dumps(results))
+(local / f'{prefix}-records.json').write_text(json.dumps(results))
 print('Demo provisioned through HTTP API: restaurants A/B, distinct managers, 3+2 categories, 5+3 products and Mesa 05.')
 print('Local credentials and browser test state are in ignored .local/.')

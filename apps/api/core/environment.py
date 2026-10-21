@@ -4,6 +4,8 @@ from pathlib import Path
 
 
 def load_local_environment():
+    if os.getenv('VERCEL') == '1':
+        return
     path = Path(__file__).resolve().parents[3] / '.env'
     if path.exists():
         for line in path.read_text(encoding='utf-8-sig').splitlines():

@@ -11,6 +11,12 @@ ENVIRONMENT = os.getenv('TAVVO_ENV', 'development')
 DEBUG = ENVIRONMENT == 'development'
 SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1,testserver').split(',')
+if os.getenv('VERCEL') == '1':
+    # Platform-generated hostnames, never unvalidated request headers.
+    for variable in ('VERCEL_URL', 'VERCEL_BRANCH_URL', 'VERCEL_PROJECT_PRODUCTION_URL'):
+        host = os.getenv(variable)
+        if host:
+            ALLOWED_HOSTS.append(host)
 INSTALLED_APPS = [
     'django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions',
     'rest_framework', 'drf_spectacular', 'core', 'identity', 'restaurants',
@@ -40,7 +46,8 @@ DATABASES = {'default': {
     'NAME': unquote(database.path.lstrip('/')), 'USER': unquote(database.username or ''),
     'PASSWORD': unquote(database.password or ''), 'HOST': database.hostname, 'PORT': database.port or 5432,
     'ATOMIC_REQUESTS': True, 'CONN_MAX_AGE': 0,
-    'OPTIONS': {'sslmode': os.getenv('DATABASE_SSLMODE', 'prefer')},
+    'OPTIONS': {'sslmode': os.getenv('DATABASE_SSLMODE', 'prefer'), 'prepare_threshold': None},
+    'DISABLE_SERVER_SIDE_CURSORS': True,
 }}
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.Argon2PasswordHasher',
@@ -63,14 +70,19 @@ SESSION_COOKIE_NAME = 'tavvo_session'
 CSRF_COOKIE_SECURE = not DEBUG
 CSRF_FAILURE_VIEW = 'identity.views.csrf_failure'
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173').split(',')
+if os.getenv('VERCEL') == '1':
+    CSRF_TRUSTED_ORIGINS += ['https://' + host for host in ALLOWED_HOSTS if host.endswith('.vercel.app')]
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_SSL_REDIRECT = os.getenv('DJANGO_HTTPS_REDIRECT', 'false').lower() == 'true'
 SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
 SECURE_HSTS_INCLUDE_SUBDOMAINS = False
 SECURE_REFERRER_POLICY = 'same-origin'
 TAVVO_MFA_ENCRYPTION_KEY = os.environ['TAVVO_MFA_ENCRYPTION_KEY']
-TAVVO_ADMIN_ORIGIN = os.getenv('TAVVO_ADMIN_ORIGIN', 'http://localhost:5173')
-TAVVO_PUBLIC_ORIGIN = os.getenv('TAVVO_PUBLIC_ORIGIN', 'http://localhost:3000')
+deployment_host = os.getenv('VERCEL_BRANCH_URL') or os.getenv('VERCEL_URL')
+deployment_origin = f'https://{deployment_host}' if deployment_host else None
+TAVVO_ADMIN_ORIGIN = os.getenv('TAVVO_ADMIN_ORIGIN', deployment_origin or 'http://localhost:5173')
+TAVVO_PUBLIC_ORIGIN = os.getenv('TAVVO_PUBLIC_ORIGIN', deployment_origin or 'http://localhost:3000')
 PUBLIC_SITE_URL = TAVVO_PUBLIC_ORIGIN
 TAVVO_PASSWORD_RESET_URL = TAVVO_ADMIN_ORIGIN + '/reset-password'
 PASSWORD_RESET_TIMEOUT = 1800
@@ -86,6 +98,8 @@ S3_BUCKET = os.getenv('S3_BUCKET', 'tavvo-images')
 S3_REGION = os.getenv('S3_REGION', 'us-east-1')
 S3_ACCESS_KEY = os.getenv('S3_ACCESS_KEY', '')
 S3_SECRET_KEY = os.getenv('S3_SECRET_KEY', '')
+S3_SESSION_TOKEN = os.getenv('S3_SESSION_TOKEN') or None
+IMAGE_MAX_BYTES = int(os.getenv('IMAGE_MAX_BYTES', str(5 * 1024 * 1024)))
 REST_FRAMEWORK = {
     'URL_FORMAT_OVERRIDE': None,
     'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework.authentication.SessionAuthentication'],
@@ -112,7 +126,7 @@ LOGGING = {
     'handlers': {'console': {'class': 'logging.StreamHandler'}},
     'root': {'handlers': ['console'], 'level': 'INFO'},
 }
-if ENVIRONMENT == 'production':
+if ENVIRONMENT in ('production', 'demo'):
     if len(SECRET_KEY) < 50 or '*' in ALLOWED_HOSTS:
         raise ValueError('Production requires a strong secret and explicit hosts')
     if not S3_ACCESS_KEY or not S3_SECRET_KEY:

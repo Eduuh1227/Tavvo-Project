@@ -16,6 +16,9 @@ playwright-report/
 test-results/
 *.log
 .local/
+.vercel/
+.agents/skills/
+skills-lock.json
 media/
 *.sqlite3
 *.egg-info/

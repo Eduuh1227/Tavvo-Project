@@ -12,7 +12,13 @@ def main():
         cursor.execute("SELECT 1 FROM pg_roles WHERE rolname = 'tavvo_app'")
         if cursor.fetchone() is None:
             cursor.execute('CREATE ROLE tavvo_app')
-        cursor.execute(sql.SQL('ALTER ROLE tavvo_app LOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOREPLICATION NOBYPASSRLS PASSWORD {}').format(sql.Literal(password)))
+        # Managed PostgreSQL owners cannot spell SUPERUSER/REPLICATION/BYPASSRLS
+        # even when disabling them. New roles default to false; reject unsafe
+        # existing roles instead of requiring superuser privileges to alter them.
+        cursor.execute("SELECT rolsuper, rolreplication, rolbypassrls FROM pg_roles WHERE rolname = 'tavvo_app'")
+        if any(cursor.fetchone()):
+            raise RuntimeError('Runtime role must not have elevated PostgreSQL privileges.')
+        cursor.execute(sql.SQL('ALTER ROLE tavvo_app LOGIN NOCREATEDB NOCREATEROLE NOINHERIT PASSWORD {}').format(sql.Literal(password)))
         cursor.execute('SELECT current_database(), current_user')
         database, owner = cursor.fetchone()
         if owner == 'tavvo_app':

@@ -26,18 +26,22 @@ def client():
         "s3", endpoint_url=settings.S3_ENDPOINT_URL or None,
         aws_access_key_id=settings.S3_ACCESS_KEY,
         aws_secret_access_key=settings.S3_SECRET_KEY,
+        aws_session_token=settings.S3_SESSION_TOKEN,
         region_name=settings.S3_REGION,
-        config=Config(signature_version="s3v4", connect_timeout=5, read_timeout=10, retries={"max_attempts": 2}),
+        config=Config(signature_version="s3v4", connect_timeout=5, read_timeout=10,
+                      retries={"max_attempts": 2}, s3={"addressing_style": "path"},
+                      request_checksum_calculation="when_required",
+                      response_checksum_validation="when_required"),
     )
 
 
 def validate_image(upload):
     limit = getattr(settings, "IMAGE_MAX_BYTES", 5 * 1024 * 1024)
     if upload.size > limit:
-        raise ValidationError({"file": "Image exceeds the 5 MB limit."})
+        raise ValidationError({"file": f"Image exceeds the {limit / 1024 / 1024:g} MB limit."})
     data = upload.read(limit + 1)
     if len(data) > limit:
-        raise ValidationError({"file": "Image exceeds the 5 MB limit."})
+        raise ValidationError({"file": f"Image exceeds the {limit / 1024 / 1024:g} MB limit."})
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("error", Image.DecompressionBombWarning)

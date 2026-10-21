@@ -1,0 +1,30 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "regions": ["gru1"],
+  "services": {
+    "api": {
+      "root": "apps/api",
+      "framework": "django",
+      "entrypoint": "config.wsgi:application"
+    },
+    "menu": {
+      "root": "apps/public-reference",
+      "framework": "nextjs",
+      "bindings": [{"type": "service", "service": "api", "format": "url", "env": "API_INTERNAL_URL"}]
+    },
+    "admin": {
+      "root": "apps/admin",
+      "framework": "vite",
+      "rewrites": [{"source": "/(.*)", "destination": "/index.html"}]
+    }
+  },
+  "rewrites": [
+    {"source": "/v1/(.*)", "destination": {"service": "api"}},
+    {"source": "/health/", "destination": {"service": "api"}},
+    {"source": "/ready/", "destination": {"service": "api"}},
+    {"source": "/r/(.*)", "destination": {"service": "menu"}},
+    {"source": "/q/(.*)", "destination": {"service": "menu"}},
+    {"source": "/_next/(.*)", "destination": {"service": "menu"}},
+    {"source": "/(.*)", "destination": {"service": "admin"}}
+  ]
+}

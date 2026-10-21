@@ -22,7 +22,7 @@ export function Login({onSession,onEnrollment}: {onSession: (session: Session) =
     if ('mfa_enrollment_required' in result && result.mfa_enrollment_required) {onEnrollment(); return;}
     const session = await request<Session>('/v1/auth/me/');
     onSession(session);
-  }} button="Entrar"/>{mfa ? <p>Informe o código do aplicativo autenticador ou um código de recuperação.</p> : null}<button className="secondary" onClick={() => setRecovery(true)}>Esqueci minha senha</button><p role="status">{message}</p></main>;
+  }} button="Entrar"/>{mfa ? <p>Informe o código do aplicativo autenticador ou um código de recuperação.</p> : null}{import.meta.env.VITE_DEMO_MODE === 'true' ? <p>Ambiente de demonstração. Recuperação por e-mail indisponível.</p> : <button className="secondary" onClick={() => setRecovery(true)}>Esqueci minha senha</button>}<p role="status">{message}</p></main>;
 }
 
 export function MfaEnrollment({onSession}: {onSession: (session: Session) => void}) {
