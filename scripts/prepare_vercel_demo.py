@@ -58,7 +58,7 @@ def main():
         'TAVVO_DB_PASSWORD': password,
         'DJANGO_SECRET_KEY': previous.get('DJANGO_SECRET_KEY') or secrets.token_urlsafe(64),
         'TAVVO_MFA_ENCRYPTION_KEY': previous.get('TAVVO_MFA_ENCRYPTION_KEY') or Fernet.generate_key().decode(),
-        'DJANGO_ALLOWED_HOSTS': 'localhost,127.0.0.1',
+        'DJANGO_ALLOWED_HOSTS': previous.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1'),
         'S3_ENDPOINT_URL': source['SUPABASE_URL'] + '/storage/v1/s3',
         'S3_REGION': 'sa-east-1', 'S3_BUCKET': 'tavvo-images',
         'S3_ACCESS_KEY': ref, 'S3_SECRET_KEY': source['SUPABASE_ANON_KEY'],

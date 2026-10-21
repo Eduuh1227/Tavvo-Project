@@ -11,8 +11,13 @@ export function apiOrigin(): string {
 export function apiUrl(path: string): string {
   const url = new URL(process.env.API_INTERNAL_URL || 'http://127.0.0.1:8000');
   if (!['http:', 'https:'].includes(url.protocol)) throw new Error('API_INTERNAL_URL inválida.');
-  url.pathname = `${url.pathname.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
-  return url.href;
+  url.pathname = `${url.pathname.replace(/\/$/, '')}/`;
+  const target = new URL(path.replace(/^\//, ''), url);
+  // Keep binding parameters while preserving endpoint queries such as ?hostname=.
+  for (const [key, value] of url.searchParams) {
+    if (!target.searchParams.has(key)) target.searchParams.append(key, value);
+  }
+  return target.href;
 }
 async function get<T>(path: string): Promise<T> {
   const response = await fetch(apiUrl(`v1/public/${path}`), {cache:'no-store', credentials:'omit', signal:AbortSignal.timeout(10000),headers:{Accept:'application/json'}});
