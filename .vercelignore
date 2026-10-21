@@ -9,6 +9,8 @@ node_modules/
 **/dist/
 **/__pycache__/
 **/*.pyc
+**/*.tsbuildinfo
+skills-lock.json
 .pytest_cache/
 .ruff_cache/
 test-results/
