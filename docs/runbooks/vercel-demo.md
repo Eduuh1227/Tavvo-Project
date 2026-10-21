@@ -45,10 +45,19 @@ As rotas do navegador usam a mesma origem, preservando sessões e CSRF.
    adicionais. `VERCEL`, `VERCEL_URL` e o binding são fornecidos pela plataforma.
    A conexão `DATABASE_URL` já contém a senha do usuário restrito da aplicação.
    A chave de serviço de storage fica exclusivamente no servidor.
+   Incluir em `DJANGO_ALLOWED_HOSTS` também o hostname exato do binding interno
+   do serviço `api` deste projeto. A Vercel usa um host em
+   `services.vercel-infra.com`; não liberar o domínio inteiro com wildcard.
+   Os hosts públicos do deploy são adicionados pelas variáveis da plataforma.
 
 5. Validar `npm run typecheck`, `npm run build` e os testes de backend locais.
    Executar `vercel deploy` no diretório vinculado, conferir o build remoto e
    guardar a URL efetivamente retornada. Não promover automaticamente a produção.
+   Confirmar o ambiente efetivo retornado: a plataforma pode classificar o
+   primeiro deploy de um projeto novo como Production. Manter os segredos de
+   demonstração em Preview e usar um Preview confirmado para os testes.
+   `apps/api/requirements.txt` deve repetir as versões de `requirements.lock`:
+   o builder de Services requer um manifesto direto, sem a inclusão `-r`.
 6. Criar um link compartilhável do Preview, com prazo, mantendo a proteção da
    Vercel. Credenciais de login são enviadas separadamente pelo titular.
 7. Carregar as variáveis de demo no processo local e executar
@@ -60,6 +69,9 @@ As rotas do navegador usam a mesma origem, preservando sessões e CSRF.
 8. Verificar navegador → API → banco → resposta: login, alteração de produto,
    cardápio público, imagem, QR e isolamento A/B. Revogar a sessão administrativa
    criada para testes e remover o arquivo temporário de cookies após verificar.
+   A suíte aceita `TAVVO_E2E_SHARE_TOKEN` e os três endereços `TAVVO_E2E_*_URL`
+   apontando ao Preview. O teste de QR navega para o endereço realmente emitido
+   pela API, sem substituir sua origem.
 
 ## Limites e operação
 
