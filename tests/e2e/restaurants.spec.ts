@@ -1,4 +1,7 @@
 import {expect, test, type Page} from '@playwright/test';
+import {previewAccess} from './preview-access';
+
+test.beforeEach(async ({context}) => previewAccess(context));
 
 const publicOrigin = process.env.TAVVO_E2E_PUBLIC_URL || 'http://localhost:3000';
 const apiOrigin = process.env.TAVVO_E2E_API_URL || 'http://127.0.0.1:8000';
@@ -26,6 +29,7 @@ test('real manager publishes a menu, enforces tenant boundaries and revokes a ta
   const tableLabel = `Mesa E2E ${suffix}`;
   let publicImageUrl = '';
   const visitor = await browser.newContext();
+  await previewAccess(visitor);
   const publicPage = await visitor.newPage();
   const browserErrors: string[] = [];
   page.on('pageerror', error => browserErrors.push(error.message));
@@ -100,6 +104,7 @@ test('real manager publishes a menu, enforces tenant boundaries and revokes a ta
 
     await test.step('manager B cannot read or alter private products from A', async () => {
       const managerB = await browser.newContext({baseURL: new URL(page.url()).origin});
+      await previewAccess(managerB);
       try {
         const otherPage = await managerB.newPage();
         await login(otherPage, 'b');
@@ -172,7 +177,7 @@ test('real manager publishes a menu, enforces tenant boundaries and revokes a ta
       expect(qrUrl).toBeTruthy();
       const qrPath = new URL(qrUrl!).pathname;
       expect(qrPath).toMatch(/^\/q\/[0-9a-f]{32}\.[A-Za-z0-9_-]{32}$/);
-      await publicPage.goto(`${publicOrigin}${qrPath}`);
+      await publicPage.goto(qrUrl!);
       await expect(publicPage.getByRole('heading', {name: 'Restaurante A', exact: true})).toBeVisible();
       await expect(publicPage.getByText(`Mesa: ${tableLabel}`, {exact: true})).toBeVisible();
       await expect(publicPage.getByRole('heading', {name: productName, exact: true})).toBeVisible();
@@ -209,6 +214,7 @@ test('public menu remains usable on a narrow mobile viewport', async ({page}) =>
 test('MFA-authenticated Tavvo administrator creates and deactivates a restaurant', async ({browser, baseURL}) => {
   const statePath = required('TAVVO_E2E_ADMIN_STATE');
   const context = await browser.newContext({baseURL, storageState: statePath});
+  await previewAccess(context);
   const page = await context.newPage();
   const suffix = String(Date.now());
   const name = `E2E Central ${suffix}`;

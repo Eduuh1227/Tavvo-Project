@@ -10,11 +10,13 @@
     "menu": {
       "root": "apps/public-reference",
       "framework": "nextjs",
+      "installCommand": "cd ../.. && npm ci --include=dev",
       "bindings": [{"type": "service", "service": "api", "format": "url", "env": "API_INTERNAL_URL"}]
     },
     "admin": {
       "root": "apps/admin",
       "framework": "vite",
+      "installCommand": "cd ../.. && npm ci --include=dev",
       "rewrites": [{"source": "/(.*)", "destination": "/index.html"}]
     }
   },

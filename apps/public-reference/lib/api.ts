@@ -7,10 +7,17 @@ export function apiOrigin(): string {
   if (!['http:', 'https:'].includes(url.protocol)) throw new Error('API_INTERNAL_URL inválida.');
   return url.origin;
 }
+/** Service bindings may include a routing prefix; preserve the complete base URL. */
+export function apiUrl(path: string): string {
+  const url = new URL(process.env.API_INTERNAL_URL || 'http://127.0.0.1:8000');
+  if (!['http:', 'https:'].includes(url.protocol)) throw new Error('API_INTERNAL_URL inválida.');
+  url.pathname = `${url.pathname.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
+  return url.href;
+}
 async function get<T>(path: string): Promise<T> {
-  const response = await fetch(`${apiOrigin()}/v1/public/${path}`, {cache:'no-store', credentials:'omit', signal:AbortSignal.timeout(10000),headers:{Accept:'application/json'}});
+  const response = await fetch(apiUrl(`v1/public/${path}`), {cache:'no-store', credentials:'omit', signal:AbortSignal.timeout(10000),headers:{Accept:'application/json'}});
   if(response.status===404)notFound();
-  if(!response.ok)throw new Error('Não foi possível consultar o cardápio agora.');
+  if(!response.ok)throw new Error(`Não foi possível consultar o cardápio agora (API ${response.status}).`);
   return response.json() as Promise<T>;
 }
 export function menu(slug:string){return get<PublicMenu>(`restaurants/${encodeURIComponent(slug)}/menu/`);}
