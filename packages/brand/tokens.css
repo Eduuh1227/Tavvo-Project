@@ -1,0 +1,87 @@
+/* Tavvo visual foundation. Reference-derived palette; confirm against original brand files.
+   CSS breakpoints: compact 640px, navigation 960px, wide 1280px.
+   Keep the literal media-query values aligned with these documented tokens. */
+:root {
+  --brand-night: #0b0f1a;
+  --brand-tech: #6366f1;
+  --brand-gray: #e5e7eb;
+  --brand-green: #10b981;
+
+  --color-night: var(--brand-night);
+  --color-tech: var(--brand-tech);
+  --color-primary: #4f46d8;
+  --color-primary-hover: #4036bd;
+  --color-primary-soft: #eeedff;
+  --color-canvas: #f4f5f9;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f8f9fd;
+  --color-text: #172033;
+  --color-muted: #626b7e;
+  --color-border: #dfe3ec;
+  --color-border-strong: #7f899c;
+  --color-success: #087d60;
+  --color-success-soft: #e6f5ee;
+  --color-danger: #b72f42;
+  --color-danger-soft: #fff1f2;
+  --color-warning: #9a5b12;
+  --color-warning-soft: #fff4df;
+  --color-info: #4d4bc0;
+  --color-info-soft: var(--color-primary-soft);
+  --color-neutral-soft: #f0f2f7;
+  --color-focus: var(--brand-tech);
+  --color-on-dark: #f6f7ff;
+  --color-muted-on-dark: #a8b0c4;
+  --color-sidebar-hover: #192139;
+  --color-line-on-dark: #2b3245;
+  --color-decorative-blue: #252867;
+  --color-decoration-fade: #161c31;
+
+  --font-sans: 'Sora', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --text-xs: .75rem;
+  --text-sm: .8125rem;
+  --text-base: .9375rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+  --line-body: 1.65;
+  --line-heading: 1.22;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --space-1: .25rem;
+  --space-2: .5rem;
+  --space-3: .75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-7: 1.75rem;
+  --space-8: 2rem;
+  --space-9: 2.25rem;
+  --space-10: 2.5rem;
+  --space-11: 2.75rem;
+  --space-12: 3rem;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+  --border-width: 1px;
+  --shadow-sm: 0 2px 8px rgb(11 15 26 / 3%);
+  --shadow-md: 0 12px 36px rgb(11 15 26 / 7%);
+  --shadow-focus: 0 0 0 3px rgb(99 102 241 / 18%);
+  --control-height: 44px;
+  --icon-sm: 16px;
+  --icon-md: 20px;
+  --icon-lg: 24px;
+  --sidebar-width: 248px;
+  --topbar-height: 80px;
+  --breakpoint-compact: 640px;
+  --breakpoint-navigation: 960px;
+  --breakpoint-wide: 1280px;
+  --transition-fast: 160ms ease;
+  --transition-standard: 220ms ease;
+}

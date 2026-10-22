@@ -1,1 +1,108 @@
-:root{font-family:system-ui,sans-serif;color:#202b25;background:#fafbf9;line-height:1.5}*{box-sizing:border-box}body{margin:0}main{max-width:960px;margin:0 auto;padding:1.5rem}header{border-bottom:1px solid #ced6d0;padding-bottom:1rem}h1{font-size:2rem;margin:.5rem 0}h2{font-size:1.5rem}h3{font-size:1.15rem;margin:0}p{margin:.5rem 0}nav{display:flex;flex-wrap:wrap;gap:.8rem;padding:1rem 0}nav a{border:1px solid #c6d2c9;border-radius:4px;padding:.5rem;color:#19533c}section{scroll-margin-top:1rem;margin-bottom:2rem}.products{display:grid;gap:1rem}article{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;background:white;border:1px solid #d8dfda;padding:1rem;border-radius:4px}.product-text{flex:1;min-width:180px}article img{object-fit:cover;border-radius:3px;max-width:100%;height:auto}.unavailable{font-weight:600;color:#8e3e13}.table{background:#eaf1ec;padding:.5rem;width:fit-content}footer{text-align:center;color:#536059;padding:2rem 1rem;border-top:1px solid #d8dfda}button{font:inherit;background:#19533c;color:white;border:0;border-radius:4px;padding:.7rem 1rem;cursor:pointer}@media(max-width:480px){main{padding:1rem}h1{font-size:1.6rem}article{align-items:flex-start}article img{width:100%;max-height:220px;object-fit:cover}}
+@import '../../../packages/brand/tokens.css';
+@import '../../../packages/brand/fonts.css';
+
+/* This dark presentation belongs to this reference frontend only.
+   It does not define a required theme for other restaurant frontends. */
+:root {
+  --menu-background: var(--color-night);
+  --menu-surface: color-mix(in srgb, var(--color-night) 96%, var(--color-surface));
+  --menu-surface-raised: color-mix(in srgb, var(--color-night) 91%, var(--color-surface));
+  --menu-text: var(--color-on-dark);
+  --menu-muted: var(--color-muted-on-dark);
+  --menu-border: var(--color-line-on-dark);
+  --menu-accent: color-mix(in srgb, var(--color-tech) 48%, var(--color-surface));
+  --menu-warning: color-mix(in srgb, var(--color-warning) 35%, var(--color-surface));
+  color-scheme: dark;
+  font-family: var(--font-sans);
+  color: var(--menu-text);
+  background: var(--menu-background);
+  font-synthesis: none;
+  line-height: var(--line-body);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
+main { flex: 1; width: min(100%, 1184px); margin-inline: auto; }
+h1, h2, h3 { line-height: var(--line-heading); letter-spacing: -.035em; overflow-wrap: anywhere; }
+p { margin: 0; overflow-wrap: anywhere; }
+a { color: inherit; text-underline-offset: .25em; overflow-wrap: anywhere; }
+button, a { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+button, input, select, textarea { font: inherit; }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--menu-accent); outline-offset: 4px; }
+::selection { background: var(--color-primary); color: var(--color-surface); }
+
+.menu-page { padding-inline: var(--space-8); padding-bottom: var(--space-12); }
+.restaurant-header { position: relative; isolation: isolate; padding: clamp(48px, 7vw, 88px) 0 var(--space-10); border-bottom: 1px solid var(--menu-border); }
+.restaurant-header::before { content: ''; position: absolute; z-index: -1; inset: 0 0 auto auto; width: 32%; height: 100%; background: linear-gradient(132deg, transparent 48%, color-mix(in srgb, var(--color-tech) 10%, transparent) 48.2%, transparent 77%); pointer-events: none; }
+.menu-eyebrow { display: flex; align-items: center; gap: var(--space-3); color: var(--menu-muted); font-size: var(--text-xs); font-weight: var(--weight-semibold); letter-spacing: .18em; text-transform: uppercase; }
+.menu-eyebrow::before { content: ''; width: 24px; height: 2px; background: var(--color-tech); flex-shrink: 0; }
+.restaurant-header h1 { margin: var(--space-5) 0 var(--space-4); max-width: 900px; font-size: clamp(2rem, 4.7vw, 3.75rem); font-weight: var(--weight-semibold); letter-spacing: -.055em; }
+.restaurant-description { max-width: 620px; color: var(--menu-muted); font-size: var(--text-md); line-height: 1.8; }
+.restaurant-details { display: flex; gap: var(--space-2) var(--space-6); flex-wrap: wrap; margin-top: var(--space-5); color: var(--menu-muted); font-size: var(--text-sm); }
+.restaurant-details:empty { display: none; }
+.restaurant-details p { display: flex; align-items: baseline; gap: var(--space-2); }
+.restaurant-details p::before { content: ''; width: 4px; height: 4px; flex: 0 0 auto; border-radius: var(--radius-pill); background: var(--menu-muted); align-self: center; }
+.table { display: inline-flex; align-items: center; margin-top: var(--space-5); border: 1px solid var(--menu-border); border-radius: var(--radius-sm); padding: var(--space-2) var(--space-4); background: var(--menu-surface); font-size: var(--text-sm); font-weight: var(--weight-semibold); }
+
+.category-nav { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); padding-block: var(--space-5); background: var(--menu-background); border-bottom: 1px solid var(--menu-border); }
+.category-nav a { min-height: var(--control-height); display: inline-flex; align-items: center; justify-content: center; padding: var(--space-2) var(--space-5); border: 1px solid var(--menu-border); border-radius: var(--radius-pill); font-size: var(--text-sm); font-weight: var(--weight-medium); text-decoration: none; transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast); }
+.category-nav a:hover { border-color: var(--color-tech); background: var(--menu-surface-raised); color: var(--menu-text); }
+.category-nav a:active { background: var(--color-primary); border-color: var(--color-primary); }
+.menu-sections { padding-top: var(--space-2); }
+.menu-category { scroll-margin-top: var(--space-6); padding-block: var(--space-10); }
+.menu-category + .menu-category { border-top: 1px solid var(--menu-border); }
+.category-heading { margin-bottom: var(--space-6); }
+.category-heading h2 { margin: 0 0 var(--space-2); font-size: var(--text-xl); font-weight: var(--weight-semibold); }
+.category-heading p { max-width: 700px; color: var(--menu-muted); font-size: var(--text-base); }
+.products { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+.menu-product { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-5); min-width: 0; padding: var(--space-6); background: var(--menu-surface); border: 1px solid var(--menu-border); border-radius: var(--radius-md); }
+.product-text { flex: 1; min-width: min(100%, 160px); }
+.product-text h3 { margin: 0 0 var(--space-3); font-size: var(--text-md); font-weight: var(--weight-semibold); letter-spacing: -.02em; }
+.product-text > p { margin-bottom: var(--space-4); color: var(--menu-muted); font-size: var(--text-sm); line-height: 1.75; }
+.product-price { display: block; margin-top: var(--space-5); font-size: var(--text-base); font-weight: var(--weight-semibold); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.menu-product img { display: block; width: 112px; height: 112px; max-width: 100%; object-fit: cover; border-radius: var(--radius-sm); background: var(--menu-surface-raised); }
+.product-text > .unavailable { width: fit-content; margin: var(--space-3) 0 0; padding: var(--space-1) var(--space-2); border: 1px solid var(--menu-border); border-radius: var(--radius-sm); color: var(--menu-warning); font-size: var(--text-xs); }
+.menu-empty { margin-block: var(--space-6); padding: var(--space-6); color: var(--menu-muted); border: 1px dashed var(--menu-border); border-radius: var(--radius-md); font-size: var(--text-base); }
+
+.menu-footer { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); width: min(calc(100% - 64px), 1120px); margin-inline: auto; padding-block: var(--space-7); border-top: 1px solid var(--menu-border); color: var(--menu-muted); font-size: var(--text-xs); }
+.footer-platform { font-weight: var(--weight-medium); }
+.menu-state { display: grid; align-items: center; padding: var(--space-8); min-height: 75vh; }
+.menu-state-card { max-width: 640px; padding: clamp(24px, 5vw, 48px); border: 1px solid var(--menu-border); border-radius: var(--radius-lg); background: var(--menu-surface); }
+.menu-state h1 { margin: var(--space-6) 0 var(--space-4); font-size: clamp(1.65rem, 4vw, 2.5rem); font-weight: var(--weight-semibold); }
+.menu-state-card > p:not(.menu-eyebrow) { color: var(--menu-muted); font-size: var(--text-base); }
+.menu-state button { min-height: var(--control-height); margin-top: var(--space-6); border: 1px solid transparent; border-radius: var(--radius-sm); background: var(--color-primary); color: var(--color-surface); padding: var(--space-3) var(--space-5); font-size: var(--text-base); font-weight: var(--weight-semibold); cursor: pointer; transition: background var(--transition-fast); }
+.menu-state button:hover { background: var(--color-primary-hover); }
+
+/* Keep literal media values aligned with shared breakpoint tokens. Navigation
+   wraps with all category links visible, without a new menu state or behavior. */
+@media (max-width: 960px) {
+  .products { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .menu-page { padding-inline: var(--space-5); padding-bottom: var(--space-8); }
+  .restaurant-header { padding-top: var(--space-10); padding-bottom: var(--space-8); }
+  .restaurant-header h1 { font-size: 2rem; }
+  .restaurant-description { font-size: var(--text-base); }
+  .restaurant-details { display: grid; }
+  .category-nav { gap: var(--space-2); padding-block: var(--space-4); }
+  .category-nav a { padding-inline: var(--space-4); font-size: var(--text-xs); }
+  .products { gap: var(--space-3); }
+  .menu-category { padding-block: var(--space-8); }
+  .category-heading { margin-bottom: var(--space-5); }
+  .category-heading h2 { font-size: var(--text-lg); }
+  .menu-product { padding: var(--space-5); gap: var(--space-4); }
+  .product-text { min-width: min(100%, 140px); }
+  .menu-product img { width: 88px; height: 88px; }
+  .menu-footer { width: calc(100% - 40px); flex-wrap: wrap; gap: var(--space-2); }
+  .menu-state { padding: var(--space-5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
+
+@media (forced-colors: active) {
+  .menu-product, .table, .menu-state-card, .category-nav a { border-color: CanvasText; }
+  .menu-eyebrow::before { background: CanvasText; }
+}
