@@ -56,11 +56,12 @@
 
 .panel-sidebar nav button.nav-active {
   background: var(--color-primary);
-  color: var(--color-on-dark);
+  color: var(--color-on-primary);
+  font-weight: var(--weight-semibold);
 }
 
 .panel-sidebar nav button:focus-visible {
-  outline-color: var(--color-on-dark);
+  outline-color: var(--color-focus-on-dark);
   outline-offset: 3px;
 }
 
@@ -125,7 +126,7 @@
   border: var(--border-width) solid var(--color-border);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
-  color: var(--color-primary);
+  color: var(--color-link);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   text-decoration: none;
@@ -134,8 +135,9 @@
 }
 
 .public-menu-link:hover {
-  border-color: var(--color-primary);
+  border-color: var(--color-focus);
   background: var(--color-primary-soft);
+  color: var(--color-link-hover);
 }
 
 .crud-section {
@@ -281,7 +283,7 @@
 
 .badge-neutral {
   background: var(--color-neutral-soft);
-  color: var(--color-muted);
+  color: var(--color-info);
 }
 
 .badge-info {
@@ -296,7 +298,7 @@
 
 .editor {
   margin: 0 0 var(--space-5);
-  border-color: var(--color-tech);
+  border-color: var(--brand-orange);
   box-shadow: var(--shadow-md);
 }
 
@@ -320,7 +322,7 @@
   height: 36px;
   border-radius: var(--radius-sm);
   background: var(--color-primary-soft);
-  color: var(--color-primary);
+  color: var(--color-link);
 }
 
 .tavvo-form {
@@ -387,7 +389,7 @@
 .empty-state > .icon {
   width: 36px;
   height: 36px;
-  color: var(--color-tech);
+  color: var(--color-link);
 }
 
 .empty-state p {
@@ -479,7 +481,7 @@
   width: fit-content;
   min-height: var(--control-height);
   padding: var(--space-3) 0;
-  color: var(--color-primary);
+  color: var(--color-link);
   font-size: var(--text-sm);
   font-weight: var(--weight-medium);
   cursor: pointer;
