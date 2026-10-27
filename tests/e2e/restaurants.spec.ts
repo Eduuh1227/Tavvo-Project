@@ -81,6 +81,8 @@ test('real manager publishes a menu, enforces tenant boundaries and revokes a ta
       await publicPage.reload();
       const image = publicPage.getByRole('img', {name: productName, exact: true});
       await expect(image).toBeVisible();
+      // Repeated runs can place this product below the lazy-loading threshold.
+      await image.scrollIntoViewIfNeeded();
       await expect.poll(() => image.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
       publicImageUrl = new URL((await image.getAttribute('src'))!, publicOrigin).href;
       expect((await publicPage.request.get(publicImageUrl)).status()).toBe(200);
