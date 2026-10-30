@@ -22,6 +22,9 @@ class StorageUnavailable(APIException):
 
 
 def client():
+    if settings.IMAGE_STORAGE_BACKEND == 'vercel_blob':
+        from .blob_storage import PrivateBlobClient
+        return PrivateBlobClient()
     return boto3.client(
         "s3", endpoint_url=settings.S3_ENDPOINT_URL or None,
         aws_access_key_id=settings.S3_ACCESS_KEY,

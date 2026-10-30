@@ -93,6 +93,9 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'false').lower() == 'true'
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Tavvo <no-reply@localhost>')
+IMAGE_STORAGE_BACKEND = os.getenv('IMAGE_STORAGE_BACKEND', 's3')
+if IMAGE_STORAGE_BACKEND not in ('s3', 'vercel_blob'):
+    raise ValueError('Unsupported image storage backend')
 S3_ENDPOINT_URL = os.getenv('S3_ENDPOINT_URL') or None
 S3_BUCKET = os.getenv('S3_BUCKET', 'tavvo-images')
 S3_REGION = os.getenv('S3_REGION', 'us-east-1')
@@ -129,5 +132,7 @@ LOGGING = {
 if ENVIRONMENT in ('production', 'demo'):
     if len(SECRET_KEY) < 50 or '*' in ALLOWED_HOSTS:
         raise ValueError('Production requires a strong secret and explicit hosts')
-    if not S3_ACCESS_KEY or not S3_SECRET_KEY:
+    if IMAGE_STORAGE_BACKEND == 's3' and (not S3_ACCESS_KEY or not S3_SECRET_KEY):
         raise ValueError('Production S3 credentials must be configured')
+    if IMAGE_STORAGE_BACKEND == 'vercel_blob' and not os.getenv('BLOB_READ_WRITE_TOKEN'):
+        raise ValueError('Private Blob credentials must be configured')
