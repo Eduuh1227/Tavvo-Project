@@ -881,23 +881,23 @@ export interface components {
             sort_order?: number;
             is_published?: boolean;
         };
-        CheckoutResult: {
-            /** Format: uri */
-            url: string;
-        };
         /**
          * @description * `pickup` - pickup
          *     * `delivery` - delivery
          *     * `table` - table
          * @enum {string}
          */
-        CreateOrderInputFulfillmentEnum: "pickup" | "delivery" | "table";
+        CheckoutFulfillmentEnum: "pickup" | "delivery" | "table";
         /**
          * @description * `offline` - offline
          *     * `stripe` - stripe
          * @enum {string}
          */
-        CreateOrderInputPaymentMethodEnum: "offline" | "stripe";
+        CheckoutPaymentMethodEnum: "offline" | "stripe";
+        CheckoutResult: {
+            /** Format: uri */
+            url: string;
+        };
         CreateOrderInputRequest: {
             /** Format: uuid */
             idempotency_key: string;
@@ -905,11 +905,11 @@ export interface components {
             customer_name: string;
             customer_phone: string;
             customer_email?: string;
-            fulfillment: components["schemas"]["CreateOrderInputFulfillmentEnum"];
+            fulfillment: components["schemas"]["CheckoutFulfillmentEnum"];
             delivery_address?: components["schemas"]["AddressInputRequest"];
             table_code?: string;
             notes?: string;
-            payment_method: components["schemas"]["CreateOrderInputPaymentMethodEnum"];
+            payment_method: components["schemas"]["CheckoutPaymentMethodEnum"];
         };
         CsrfResult: {
             csrfToken: string;
@@ -937,13 +937,6 @@ export interface components {
          * @enum {string}
          */
         DomainStatusEnum: "pending" | "verified" | "disabled";
-        /**
-         * @description * `pickup` - Retirada
-         *     * `delivery` - Entrega
-         *     * `table` - Mesa
-         * @enum {string}
-         */
-        FulfillmentE9aEnum: "pickup" | "delivery" | "table";
         IdentityUser: {
             /** Format: uuid */
             id: string;
@@ -1047,8 +1040,8 @@ export interface components {
         Order: {
             /** Format: uuid */
             readonly id: string;
-            readonly status: components["schemas"]["StatusD35Enum"];
-            readonly fulfillment: components["schemas"]["FulfillmentE9aEnum"];
+            readonly status: components["schemas"]["OrderStatusEnum"];
+            readonly fulfillment: components["schemas"]["OrderFulfillmentEnum"];
             readonly table_label: string;
             readonly customer_name: string;
             readonly customer_phone: string;
@@ -1063,7 +1056,7 @@ export interface components {
             readonly delivery_fee: string;
             /** Format: decimal */
             readonly total: string;
-            readonly payment_method: components["schemas"]["PaymentMethod744Enum"];
+            readonly payment_method: components["schemas"]["OrderPaymentMethodEnum"];
             readonly payment_status: string;
             readonly version: number;
             readonly estimated_minutes: number;
@@ -1077,6 +1070,13 @@ export interface components {
             order: components["schemas"]["PublicOrder"];
             access_token: string;
         };
+        /**
+         * @description * `pickup` - Retirada
+         *     * `delivery` - Entrega
+         *     * `table` - Mesa
+         * @enum {string}
+         */
+        OrderFulfillmentEnum: "pickup" | "delivery" | "table";
         OrderItem: {
             /** Format: uuid */
             readonly id: string;
@@ -1092,6 +1092,12 @@ export interface components {
             product_id: string;
             quantity: number;
         };
+        /**
+         * @description * `offline` - Na entrega/retirada
+         *     * `stripe` - Online
+         * @enum {string}
+         */
+        OrderPaymentMethodEnum: "offline" | "stripe";
         OrderSettings: {
             readonly online_payment_available: boolean;
             readonly test_mode: boolean;
@@ -1107,6 +1113,18 @@ export interface components {
             delivery_postal_prefixes?: unknown;
             estimated_minutes?: number;
         };
+        /**
+         * @description * `awaiting_payment` - Aguardando pagamento
+         *     * `received` - Recebido
+         *     * `accepted` - Aceito
+         *     * `preparing` - Em preparo
+         *     * `ready` - Pronto
+         *     * `dispatched` - Saiu para entrega
+         *     * `completed` - Concluído
+         *     * `cancelled` - Cancelado
+         * @enum {string}
+         */
+        OrderStatusEnum: "awaiting_payment" | "received" | "accepted" | "preparing" | "ready" | "dispatched" | "completed" | "cancelled";
         OtpInputRequest: {
             otp: string;
         };
@@ -1297,12 +1315,6 @@ export interface components {
                 [key: string]: string;
             };
         };
-        /**
-         * @description * `offline` - Na entrega/retirada
-         *     * `stripe` - Online
-         * @enum {string}
-         */
-        PaymentMethod744Enum: "offline" | "stripe";
         PlatformUserInputRequest: {
             /** Format: email */
             email: string;
@@ -1368,8 +1380,8 @@ export interface components {
         PublicOrder: {
             /** Format: uuid */
             readonly id: string;
-            status?: components["schemas"]["StatusD35Enum"];
-            fulfillment: components["schemas"]["FulfillmentE9aEnum"];
+            status?: components["schemas"]["OrderStatusEnum"];
+            fulfillment: components["schemas"]["OrderFulfillmentEnum"];
             table_label?: string;
             currency?: string;
             /** Format: decimal */
@@ -1378,7 +1390,7 @@ export interface components {
             delivery_fee?: string;
             /** Format: decimal */
             total: string;
-            payment_method: components["schemas"]["PaymentMethod744Enum"];
+            payment_method: components["schemas"]["OrderPaymentMethodEnum"];
             payment_status?: string;
             estimated_minutes?: number;
             /** Format: date-time */
@@ -1457,18 +1469,6 @@ export interface components {
             /** Format: date-time */
             readonly updated_at: string;
         };
-        /**
-         * @description * `awaiting_payment` - Aguardando pagamento
-         *     * `received` - Recebido
-         *     * `accepted` - Aceito
-         *     * `preparing` - Em preparo
-         *     * `ready` - Pronto
-         *     * `dispatched` - Saiu para entrega
-         *     * `completed` - Concluído
-         *     * `cancelled` - Cancelado
-         * @enum {string}
-         */
-        StatusD35Enum: "awaiting_payment" | "received" | "accepted" | "preparing" | "ready" | "dispatched" | "completed" | "cancelled";
         Subscription: {
             status?: string;
             cancel_at_period_end?: boolean;
@@ -1478,7 +1478,7 @@ export interface components {
             readonly updated_at: string;
         };
         TransitionInputRequest: {
-            status: components["schemas"]["StatusD35Enum"];
+            status: components["schemas"]["OrderStatusEnum"];
             version: number;
         };
     };

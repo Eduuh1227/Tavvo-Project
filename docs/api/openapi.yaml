@@ -2332,15 +2332,7 @@ components:
           type: boolean
       required:
       - name
-    CheckoutResult:
-      type: object
-      properties:
-        url:
-          type: string
-          format: uri
-      required:
-      - url
-    CreateOrderInputFulfillmentEnum:
+    CheckoutFulfillmentEnum:
       enum:
       - pickup
       - delivery
@@ -2350,7 +2342,7 @@ components:
         * `pickup` - pickup
         * `delivery` - delivery
         * `table` - table
-    CreateOrderInputPaymentMethodEnum:
+    CheckoutPaymentMethodEnum:
       enum:
       - offline
       - stripe
@@ -2358,6 +2350,14 @@ components:
       description: |-
         * `offline` - offline
         * `stripe` - stripe
+    CheckoutResult:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+      required:
+      - url
     CreateOrderInputRequest:
       type: object
       properties:
@@ -2383,7 +2383,7 @@ components:
           - type: string
             maxLength: 0
         fulfillment:
-          $ref: '#/components/schemas/CreateOrderInputFulfillmentEnum'
+          $ref: '#/components/schemas/CheckoutFulfillmentEnum'
         delivery_address:
           $ref: '#/components/schemas/AddressInputRequest'
         table_code:
@@ -2393,7 +2393,7 @@ components:
           type: string
           maxLength: 500
         payment_method:
-          $ref: '#/components/schemas/CreateOrderInputPaymentMethodEnum'
+          $ref: '#/components/schemas/CheckoutPaymentMethodEnum'
       required:
       - customer_name
       - customer_phone
@@ -2458,16 +2458,6 @@ components:
         * `pending` - Pending verification
         * `verified` - Verified
         * `disabled` - Disabled
-    FulfillmentE9aEnum:
-      enum:
-      - pickup
-      - delivery
-      - table
-      type: string
-      description: |-
-        * `pickup` - Retirada
-        * `delivery` - Entrega
-        * `table` - Mesa
     IdentityUser:
       type: object
       properties:
@@ -2709,11 +2699,11 @@ components:
           readOnly: true
         status:
           allOf:
-          - $ref: '#/components/schemas/StatusD35Enum'
+          - $ref: '#/components/schemas/OrderStatusEnum'
           readOnly: true
         fulfillment:
           allOf:
-          - $ref: '#/components/schemas/FulfillmentE9aEnum'
+          - $ref: '#/components/schemas/OrderFulfillmentEnum'
           readOnly: true
         table_label:
           type: string
@@ -2753,7 +2743,7 @@ components:
           readOnly: true
         payment_method:
           allOf:
-          - $ref: '#/components/schemas/PaymentMethod744Enum'
+          - $ref: '#/components/schemas/OrderPaymentMethodEnum'
           readOnly: true
         payment_status:
           type: string
@@ -2808,6 +2798,16 @@ components:
       required:
       - access_token
       - order
+    OrderFulfillmentEnum:
+      enum:
+      - pickup
+      - delivery
+      - table
+      type: string
+      description: |-
+        * `pickup` - Retirada
+        * `delivery` - Entrega
+        * `table` - Mesa
     OrderItem:
       type: object
       properties:
@@ -2849,6 +2849,14 @@ components:
       required:
       - product_id
       - quantity
+    OrderPaymentMethodEnum:
+      enum:
+      - offline
+      - stripe
+      type: string
+      description: |-
+        * `offline` - Na entrega/retirada
+        * `stripe` - Online
     OrderSettings:
       type: object
       properties:
@@ -2884,6 +2892,26 @@ components:
       required:
       - online_payment_available
       - test_mode
+    OrderStatusEnum:
+      enum:
+      - awaiting_payment
+      - received
+      - accepted
+      - preparing
+      - ready
+      - dispatched
+      - completed
+      - cancelled
+      type: string
+      description: |-
+        * `awaiting_payment` - Aguardando pagamento
+        * `received` - Recebido
+        * `accepted` - Aceito
+        * `preparing` - Em preparo
+        * `ready` - Pronto
+        * `dispatched` - Saiu para entrega
+        * `completed` - Concluído
+        * `cancelled` - Cancelado
     OtpInputRequest:
       type: object
       properties:
@@ -3227,14 +3255,6 @@ components:
           type: object
           additionalProperties:
             type: string
-    PaymentMethod744Enum:
-      enum:
-      - offline
-      - stripe
-      type: string
-      description: |-
-        * `offline` - Na entrega/retirada
-        * `stripe` - Online
     PlatformUserInputRequest:
       type: object
       properties:
@@ -3419,9 +3439,9 @@ components:
           format: uuid
           readOnly: true
         status:
-          $ref: '#/components/schemas/StatusD35Enum'
+          $ref: '#/components/schemas/OrderStatusEnum'
         fulfillment:
-          $ref: '#/components/schemas/FulfillmentE9aEnum'
+          $ref: '#/components/schemas/OrderFulfillmentEnum'
         table_label:
           type: string
           maxLength: 80
@@ -3441,7 +3461,7 @@ components:
           format: decimal
           pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
         payment_method:
-          $ref: '#/components/schemas/PaymentMethod744Enum'
+          $ref: '#/components/schemas/OrderPaymentMethodEnum'
         payment_status:
           type: string
           maxLength: 24
@@ -3671,26 +3691,6 @@ components:
           readOnly: true
       required:
       - updated_at
-    StatusD35Enum:
-      enum:
-      - awaiting_payment
-      - received
-      - accepted
-      - preparing
-      - ready
-      - dispatched
-      - completed
-      - cancelled
-      type: string
-      description: |-
-        * `awaiting_payment` - Aguardando pagamento
-        * `received` - Recebido
-        * `accepted` - Aceito
-        * `preparing` - Em preparo
-        * `ready` - Pronto
-        * `dispatched` - Saiu para entrega
-        * `completed` - Concluído
-        * `cancelled` - Cancelado
     Subscription:
       type: object
       properties:
@@ -3713,7 +3713,7 @@ components:
       type: object
       properties:
         status:
-          $ref: '#/components/schemas/StatusD35Enum'
+          $ref: '#/components/schemas/OrderStatusEnum'
         version:
           type: integer
           minimum: 1

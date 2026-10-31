@@ -128,6 +128,11 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'Shared tenant-isolated restaurant platform. Decimal amounts are strings.',
     'COMPONENT_SPLIT_REQUEST': True,
     'ENUM_NAME_OVERRIDES': {
+        'OrderStatusEnum': [('awaiting_payment', 'Aguardando pagamento'), ('received', 'Recebido'), ('accepted', 'Aceito'), ('preparing', 'Em preparo'), ('ready', 'Pronto'), ('dispatched', 'Saiu para entrega'), ('completed', 'Concluído'), ('cancelled', 'Cancelado')],
+        'OrderFulfillmentEnum': [('pickup', 'Retirada'), ('delivery', 'Entrega'), ('table', 'Mesa')],
+        'CheckoutFulfillmentEnum': ['pickup', 'delivery', 'table'],
+        'OrderPaymentMethodEnum': [('offline', 'Na entrega/retirada'), ('stripe', 'Online')],
+        'CheckoutPaymentMethodEnum': ['offline', 'stripe'],
         'ActiveStatusEnum': [('active', 'Active'), ('inactive', 'Inactive')],
         'DomainStatusEnum': [('pending', 'Pending verification'), ('verified', 'Verified'), ('disabled', 'Disabled')],
         'MembershipStatusEnum': [('active', 'Active'), ('revoked', 'Revoked')],
