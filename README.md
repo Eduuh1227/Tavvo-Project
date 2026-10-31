@@ -1,6 +1,8 @@
 # Tavvo Restaurants
 
-SaaS multi-tenant de cardápios digitais, com backend central Django REST Framework, PostgreSQL, painéis React e site público Next.js.
+SaaS multi-tenant para restaurantes: cardápio digital, pedidos, entrega manual e pagamentos/assinaturas Stripe em sandbox. Backend Django REST Framework, PostgreSQL com RLS, painel React e site Next.js.
+
+Demonstração pública: [tavvo-demo.vercel.app](https://tavvo-demo.vercel.app). O painel exige login. Pagamentos são exclusivamente de teste; envio real de e-mail foi adiado pelo responsável. Consulte [operação do comércio](docs/commerce-demo.md).
 
 ## Executar localmente
 
@@ -19,7 +21,7 @@ O PostgreSQL e o S3 local têm volumes persistentes. A API usa uma role sem prop
 
 ## Estrutura
 
-- `apps/api`: identidade/MFA, restaurantes, catálogo, publicação, mesas/QR e auditoria.
+- `apps/api`: identidade/MFA, restaurantes, catálogo, publicação, mesas/QR, pedidos, cobrança de teste e auditoria.
 - `apps/admin`: painéis Tavvo e restaurante em React/Vite.
 - `apps/public-reference`: site Next.js alimentado pela API pública.
 - `packages/api-client`: contrato compartilhado pelos frontends.
@@ -55,9 +57,9 @@ Reinicie os serviços preservando seus dados e execute `python scripts/verify_pe
 
 ## Estado e operação
 
-O fluxo integrado passou localmente e na [CI com Docker Compose](https://github.com/Eduuh1227/Tavvo-Project/actions/runs/39478968836): 40 testes de backend e três testes de navegador, além de comparação dos dados após reiniciar serviços e banco. O contrato OpenAPI validado gera os tipos compartilhados dos frontends. Consulte [evidências e limites da validação](docs/verification/2026-10-20.md).
+A etapa de comércio foi validada com 52 testes de backend, compilação dos frontends, contrato OpenAPI e fluxo de navegador local/publicado. Na Vercel, o cartão oficial de teste da Stripe confirmou pagamento por webhook; o painel realizou o estorno. Assinatura de teste e portal também foram verificados. Veja [evidências de 31/10/2026](docs/verification/2026-10-31-commerce-demo.md).
 
-O Compose completo foi executado no GitHub Actions com PostgreSQL, MinIO, Gunicorn e Mailpit; os testes de imagem no navegador usaram esse MinIO real. Os testes locais de storage usaram Moto como emulador S3. Não há deploy de produção, infraestrutura contratada nem credenciais de produção; SMTP/S3 de fornecedores externos ainda precisam de homologação.
+A demonstração usa Neon e Vercel Blob privado. O destino production da Vercel fornece o endereço fixo, mas o sistema permanece em modo demo e rejeita chaves Stripe live. Não está homologado para vendas reais. E-mail, domínio próprio e onboarding/repasse aos restaurantes continuam dependentes das configurações descritas na documentação. O SMTP segue desativado por decisão do usuário.
 
 - [Publicação manual e observabilidade](docs/runbooks/production.md)
 - [Backup e restauração](docs/runbooks/backup-restore.md)
