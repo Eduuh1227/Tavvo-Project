@@ -356,6 +356,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/public/restaurants/{slug}/ordering/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["public_restaurants_ordering_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/restaurants/{slug}/orders/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["public_restaurants_orders_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/restaurants/{slug}/orders/{order_id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["public_restaurants_orders_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/restaurants/{slug}/orders/{order_id}/checkout/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["public_restaurants_orders_checkout_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/restaurants/{restaurant_id}/audit/": {
         parameters: {
             query?: never;
@@ -366,6 +430,54 @@ export interface paths {
         get: operations["restaurants_audit_list"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/restaurants/{restaurant_id}/billing/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["restaurants_billing_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/restaurants/{restaurant_id}/billing/checkout/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["restaurants_billing_checkout_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/restaurants/{restaurant_id}/billing/portal/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["restaurants_billing_portal_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -446,6 +558,102 @@ export interface paths {
         get: operations["restaurants_images_retrieve"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/restaurants/{restaurant_id}/ordering/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["restaurants_ordering_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["restaurants_ordering_partial_update"];
+        trace?: never;
+    };
+    "/v1/restaurants/{restaurant_id}/orders/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["restaurants_orders_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/restaurants/{restaurant_id}/orders/{id}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["restaurants_orders_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/restaurants/{restaurant_id}/orders/{id}/received-payment/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["restaurants_orders_received_payment_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/restaurants/{restaurant_id}/orders/{id}/refund/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["restaurants_orders_refund_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/restaurants/{restaurant_id}/orders/{id}/transition/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["restaurants_orders_transition_create"];
         delete?: never;
         options?: never;
         head?: never;
@@ -628,6 +836,14 @@ export interface components {
          * @enum {string}
          */
         ActiveStatusEnum: "active" | "inactive";
+        AddressInputRequest: {
+            street: string;
+            number: string;
+            neighborhood: string;
+            city: string;
+            postal_code: string;
+            complement?: string;
+        };
         Audit: {
             /** Format: uuid */
             readonly id: string;
@@ -640,6 +856,12 @@ export interface components {
             readonly request_id: string;
             /** Format: date-time */
             readonly created_at: string;
+        };
+        BillingStatus: {
+            subscription: components["schemas"]["Subscription"];
+            available: boolean;
+            test_mode: boolean;
+            plan_label: string;
         };
         Category: {
             /** Format: uuid */
@@ -658,6 +880,36 @@ export interface components {
             description?: string;
             sort_order?: number;
             is_published?: boolean;
+        };
+        CheckoutResult: {
+            /** Format: uri */
+            url: string;
+        };
+        /**
+         * @description * `pickup` - pickup
+         *     * `delivery` - delivery
+         *     * `table` - table
+         * @enum {string}
+         */
+        CreateOrderInputFulfillmentEnum: "pickup" | "delivery" | "table";
+        /**
+         * @description * `offline` - offline
+         *     * `stripe` - stripe
+         * @enum {string}
+         */
+        CreateOrderInputPaymentMethodEnum: "offline" | "stripe";
+        CreateOrderInputRequest: {
+            /** Format: uuid */
+            idempotency_key: string;
+            items: components["schemas"]["OrderLineInputRequest"][];
+            customer_name: string;
+            customer_phone: string;
+            customer_email?: string;
+            fulfillment: components["schemas"]["CreateOrderInputFulfillmentEnum"];
+            delivery_address?: components["schemas"]["AddressInputRequest"];
+            table_code?: string;
+            notes?: string;
+            payment_method: components["schemas"]["CreateOrderInputPaymentMethodEnum"];
         };
         CsrfResult: {
             csrfToken: string;
@@ -685,6 +937,13 @@ export interface components {
          * @enum {string}
          */
         DomainStatusEnum: "pending" | "verified" | "disabled";
+        /**
+         * @description * `pickup` - Retirada
+         *     * `delivery` - Entrega
+         *     * `table` - Mesa
+         * @enum {string}
+         */
+        FulfillmentE9aEnum: "pickup" | "delivery" | "table";
         IdentityUser: {
             /** Format: uuid */
             id: string;
@@ -785,6 +1044,69 @@ export interface components {
         MfaSetupRequired: {
             mfa_enrollment_required: boolean;
         };
+        Order: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly status: components["schemas"]["StatusD35Enum"];
+            readonly fulfillment: components["schemas"]["FulfillmentE9aEnum"];
+            readonly table_label: string;
+            readonly customer_name: string;
+            readonly customer_phone: string;
+            /** Format: email */
+            readonly customer_email: string;
+            readonly delivery_address: unknown;
+            readonly notes: string;
+            readonly currency: string;
+            /** Format: decimal */
+            readonly subtotal: string;
+            /** Format: decimal */
+            readonly delivery_fee: string;
+            /** Format: decimal */
+            readonly total: string;
+            readonly payment_method: components["schemas"]["PaymentMethod744Enum"];
+            readonly payment_status: string;
+            readonly version: number;
+            readonly estimated_minutes: number;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+            readonly items: components["schemas"]["OrderItem"][];
+        };
+        OrderCreated: {
+            order: components["schemas"]["PublicOrder"];
+            access_token: string;
+        };
+        OrderItem: {
+            /** Format: uuid */
+            readonly id: string;
+            name: string;
+            quantity: number;
+            /** Format: decimal */
+            unit_price: string;
+            /** Format: decimal */
+            line_total: string;
+        };
+        OrderLineInputRequest: {
+            /** Format: uuid */
+            product_id: string;
+            quantity: number;
+        };
+        OrderSettings: {
+            readonly online_payment_available: boolean;
+            readonly test_mode: boolean;
+            accepting_orders?: boolean;
+            pickup_enabled?: boolean;
+            delivery_enabled?: boolean;
+            table_enabled?: boolean;
+            offline_payment_enabled?: boolean;
+            /** Format: decimal */
+            delivery_fee?: string;
+            /** Format: decimal */
+            minimum_subtotal?: string;
+            delivery_postal_prefixes?: unknown;
+            estimated_minutes?: number;
+        };
         OtpInputRequest: {
             otp: string;
         };
@@ -863,6 +1185,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["MenuTable"][];
         };
+        PaginatedOrderList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Order"][];
+        };
         PaginatedProductList: {
             /** @example 123 */
             count: number;
@@ -917,6 +1254,19 @@ export interface components {
             label?: string;
             status?: components["schemas"]["ActiveStatusEnum"];
         };
+        PatchedOrderSettingsRequest: {
+            accepting_orders?: boolean;
+            pickup_enabled?: boolean;
+            delivery_enabled?: boolean;
+            table_enabled?: boolean;
+            offline_payment_enabled?: boolean;
+            /** Format: decimal */
+            delivery_fee?: string;
+            /** Format: decimal */
+            minimum_subtotal?: string;
+            delivery_postal_prefixes?: unknown;
+            estimated_minutes?: number;
+        };
         PatchedPlatformUserUpdateInputRequest: {
             name?: string;
             is_platform_admin?: boolean;
@@ -947,6 +1297,12 @@ export interface components {
                 [key: string]: string;
             };
         };
+        /**
+         * @description * `offline` - Na entrega/retirada
+         *     * `stripe` - Online
+         * @enum {string}
+         */
+        PaymentMethod744Enum: "offline" | "stripe";
         PlatformUserInputRequest: {
             /** Format: email */
             email: string;
@@ -1008,6 +1364,26 @@ export interface components {
         PublicMenu: {
             restaurant: components["schemas"]["PublicRestaurant"];
             categories: components["schemas"]["PublicCategory"][];
+        };
+        PublicOrder: {
+            /** Format: uuid */
+            readonly id: string;
+            status?: components["schemas"]["StatusD35Enum"];
+            fulfillment: components["schemas"]["FulfillmentE9aEnum"];
+            table_label?: string;
+            currency?: string;
+            /** Format: decimal */
+            subtotal: string;
+            /** Format: decimal */
+            delivery_fee?: string;
+            /** Format: decimal */
+            total: string;
+            payment_method: components["schemas"]["PaymentMethod744Enum"];
+            payment_status?: string;
+            estimated_minutes?: number;
+            /** Format: date-time */
+            readonly created_at: string;
+            readonly items: components["schemas"]["OrderItem"][];
         };
         PublicProduct: {
             /** Format: uuid */
@@ -1080,6 +1456,30 @@ export interface components {
             };
             /** Format: date-time */
             readonly updated_at: string;
+        };
+        /**
+         * @description * `awaiting_payment` - Aguardando pagamento
+         *     * `received` - Recebido
+         *     * `accepted` - Aceito
+         *     * `preparing` - Em preparo
+         *     * `ready` - Pronto
+         *     * `dispatched` - Saiu para entrega
+         *     * `completed` - Concluído
+         *     * `cancelled` - Cancelado
+         * @enum {string}
+         */
+        StatusD35Enum: "awaiting_payment" | "received" | "accepted" | "preparing" | "ready" | "dispatched" | "completed" | "cancelled";
+        Subscription: {
+            status?: string;
+            cancel_at_period_end?: boolean;
+            /** Format: date-time */
+            current_period_end?: string | null;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        TransitionInputRequest: {
+            status: components["schemas"]["StatusD35Enum"];
+            version: number;
         };
     };
     responses: never;
@@ -1762,6 +2162,106 @@ export interface operations {
             };
         };
     };
+    public_restaurants_ordering_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderSettings"];
+                };
+            };
+        };
+    };
+    public_restaurants_orders_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateOrderInputRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["CreateOrderInputRequest"];
+                "multipart/form-data": components["schemas"]["CreateOrderInputRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderCreated"];
+                };
+            };
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderCreated"];
+                };
+            };
+        };
+    };
+    public_restaurants_orders_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_id: string;
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicOrder"];
+                };
+            };
+        };
+    };
+    public_restaurants_orders_checkout_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                order_id: string;
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckoutResult"];
+                };
+            };
+        };
+    };
     restaurants_audit_list: {
         parameters: {
             query?: {
@@ -1782,6 +2282,69 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PaginatedAuditList"];
+                };
+            };
+        };
+    };
+    restaurants_billing_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                restaurant_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BillingStatus"];
+                };
+            };
+        };
+    };
+    restaurants_billing_checkout_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                restaurant_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckoutResult"];
+                };
+            };
+        };
+    };
+    restaurants_billing_portal_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                restaurant_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckoutResult"];
                 };
             };
         };
@@ -2112,6 +2675,172 @@ export interface operations {
                 };
                 content: {
                     "image/jpeg": string;
+                };
+            };
+        };
+    };
+    restaurants_ordering_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                restaurant_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderSettings"];
+                };
+            };
+        };
+    };
+    restaurants_ordering_partial_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                restaurant_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedOrderSettingsRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["PatchedOrderSettingsRequest"];
+                "multipart/form-data": components["schemas"]["PatchedOrderSettingsRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderSettings"];
+                };
+            };
+        };
+    };
+    restaurants_orders_list: {
+        parameters: {
+            query?: {
+                /** @description Um número de página dentro do conjunto de resultados paginado. */
+                page?: number;
+            };
+            header?: never;
+            path: {
+                restaurant_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedOrderList"];
+                };
+            };
+        };
+    };
+    restaurants_orders_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                restaurant_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"];
+                };
+            };
+        };
+    };
+    restaurants_orders_received_payment_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                restaurant_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"];
+                };
+            };
+        };
+    };
+    restaurants_orders_refund_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                restaurant_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"];
+                };
+            };
+        };
+    };
+    restaurants_orders_transition_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                restaurant_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TransitionInputRequest"];
+                "application/x-www-form-urlencoded": components["schemas"]["TransitionInputRequest"];
+                "multipart/form-data": components["schemas"]["TransitionInputRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Order"];
                 };
             };
         };

@@ -1,6 +1,9 @@
 import type {ReactNode} from 'react';
 
 const paths: Record<string, ReactNode> = {
+  orders: <path d="M5 3h14v18l-3-2-4 2-4-2-3 2zM8 8h8M8 12h8"/>,
+  ordering: <path d="M3 5h11v12H3zM14 9h4l3 4v4h-7M7 17v3M18 17v3"/>,
+  billing: <><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/></>,
   categories: <><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></>,
   products: <><path d="M8 4H5a2 2 0 0 0-2 2v14h18V6a2 2 0 0 0-2-2h-3M8 3h8v4H8zM7 12h10M7 16h7"/></>,
   tables: <><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><path d="M15 15h3v3h3v3h-6zM21 12v3M12 3v3M12 12h-1M3 12h4M12 18v3"/></>,

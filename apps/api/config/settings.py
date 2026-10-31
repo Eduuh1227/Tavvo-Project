@@ -20,7 +20,7 @@ if os.getenv('VERCEL') == '1':
 INSTALLED_APPS = [
     'django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions',
     'rest_framework', 'drf_spectacular', 'core', 'identity', 'restaurants',
-    'catalog', 'publishing', 'tables', 'audit',
+    'catalog', 'publishing', 'tables', 'audit', 'commerce',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -92,6 +92,15 @@ EMAIL_PORT = int(os.getenv('EMAIL_PORT', '1025'))
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'false').lower() == 'true'
+EMAIL_TIMEOUT = 10
+TAVVO_RECOVERY_QUEUE_ENABLED = os.getenv('TAVVO_RECOVERY_QUEUE_ENABLED', 'false').lower() == 'true'
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')
+STRIPE_SUBSCRIPTION_PRICE_ID = os.getenv('STRIPE_SUBSCRIPTION_PRICE_ID', '')
+STRIPE_PORTAL_CONFIGURATION_ID = os.getenv('STRIPE_PORTAL_CONFIGURATION_ID', '')
+STRIPE_PLAN_LABEL = os.getenv('STRIPE_PLAN_LABEL', 'Assinatura de demonstração — ambiente de testes')
+if STRIPE_SECRET_KEY and not STRIPE_SECRET_KEY.startswith(('sk_test_', 'rk_test_')):
+    raise ValueError('This release accepts Stripe sandbox credentials only')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'Tavvo <no-reply@localhost>')
 IMAGE_STORAGE_BACKEND = os.getenv('IMAGE_STORAGE_BACKEND', 's3')
 if IMAGE_STORAGE_BACKEND not in ('s3', 'vercel_blob'):

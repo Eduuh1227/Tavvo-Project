@@ -30,7 +30,7 @@ def authorize_restaurant(request, restaurant_id, action='read'):
             raise PermissionDenied('Restaurante inativo.')
         if action == 'domains':
             raise PermissionDenied('A gestão de domínios exige privilégio Tavvo.')
-        if membership.role != 'manager' and action not in ('read', 'availability'):
+        if membership.role != 'manager' and action not in ('read', 'availability', 'orders'):
             raise PermissionDenied('Esta operação exige um gestor.')
     set_tenant(restaurant.id)
     return restaurant

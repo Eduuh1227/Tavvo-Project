@@ -18,6 +18,14 @@ export type Audit = Schemas['Audit'];
 export interface Page<T> {count: number; next: string | null; previous: string | null; results: T[]}
 export type PublicMenu = Schemas['PublicMenu'];
 export type QrResolution = Schemas['QRResolution'];
+export type Order = Schemas['Order'];
+export type PublicOrder = Required<Schemas['PublicOrder']>;
+export type OrderCreated = Omit<Schemas['OrderCreated'],'order'> & {order:PublicOrder};
+export type Ordering = Required<Schemas['OrderSettings']>;
+export type BillingStatus = Omit<Schemas['BillingStatus'],'subscription'> & {subscription:Required<Schemas['Subscription']>};
+export const orderLabels: Record<string, string> = {awaiting_payment:'Aguardando pagamento',received:'Recebido',accepted:'Aceito',preparing:'Em preparo',ready:'Pronto',dispatched:'Saiu para entrega',completed:'Concluído',cancelled:'Cancelado'};
+export const paymentLabels: Record<string, string> = {unpaid:'Pendente',paid:'Pago',expired:'Expirado',failed:'Pagamento falhou',refunded:'Estornado',refund_pending:'Estorno pendente',review:'Em análise'};
+export const fulfillmentLabels: Record<string, string> = {pickup:'Retirada',delivery:'Entrega',table:'Mesa'};
 
 export class ApiError extends Error {
   constructor(public status: number, public detail: unknown) {

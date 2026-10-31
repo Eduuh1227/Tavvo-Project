@@ -149,7 +149,9 @@ class PasswordResetRequestView(CsrfAPIView):
         email = values.validated_data["email"].lower()
         # Identical response and persistent operation for existing/nonexisting accounts.
         if limits_allow(request, "reset", email):
-            PasswordResetDelivery.objects.create(email=email)
+            delivery = PasswordResetDelivery.objects.create(email=email)
+            from .mail_delivery import enqueue_recovery
+            transaction.on_commit(lambda: enqueue_recovery(delivery.id))
         return Response({"message": "Se a conta existir, enviaremos as instruções de recuperação."}, status=202)
 
 

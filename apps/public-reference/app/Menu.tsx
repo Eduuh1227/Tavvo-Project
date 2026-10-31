@@ -1,13 +1,14 @@
 import type {PublicMenu} from '@tavvo/api-client';
+import {OrderingProvider,AddToCart} from './Ordering';
 import {imagePath} from '../lib/api';
 
 function money(price:string,currency:string):string {
   const [whole,fraction='00']=price.split('.');
   try{return `${currency==='BRL'?'R$':currency} ${new Intl.NumberFormat('pt-BR',{maximumFractionDigits:0}).format(BigInt(whole))},${fraction.padEnd(2,'0')}`;}catch{return `${price} ${currency}`;}
 }
-export function Menu({data,table}:{data:PublicMenu;table?:string}){
+export function Menu({data,table,tableCode}:{data:PublicMenu;table?:string;tableCode?:string}){
   const settings=data.restaurant.settings;const config=settings?.public_config || {};
-  return <main className="menu-page">
+  return <main className="menu-page"><OrderingProvider key={data.restaurant.slug} slug={data.restaurant.slug} tableCode={tableCode}>
     <header className="restaurant-header">
       <p className="menu-eyebrow">Cardápio digital</p>
       <h1>{data.restaurant.name}</h1>
@@ -34,6 +35,7 @@ export function Menu({data,table}:{data:PublicMenu;table?:string}){
                 <h3>{product.name}</h3>
                 {product.description?<p>{product.description}</p>:null}
                 <strong className="product-price">{money(product.price,product.currency)}</strong>
+                {product.is_available&&product.currency==='BRL'?<AddToCart id={product.id} name={product.name} price={product.price}/>:null}
                 {!product.is_available?<p className="unavailable">Indisponível no momento</p>:null}
               </div>
               {product.images.map(image=>{const src=imagePath(image.url);return src?<img key={image.id} src={src} alt={product.name} width="160" height="120" loading="lazy"/>:null;})}
@@ -43,5 +45,5 @@ export function Menu({data,table}:{data:PublicMenu;table?:string}){
         </section>)}
       </div>
     </>:<p className="menu-empty">O restaurante ainda não publicou seu cardápio.</p>}
-  </main>;
+  </OrderingProvider></main>;
 }

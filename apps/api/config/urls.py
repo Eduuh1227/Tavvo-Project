@@ -12,4 +12,5 @@ urlpatterns = [
     path('v1/', include('publishing.urls')),
     path('v1/', include('tables.urls')),
     path('v1/', include('audit.urls')),
+    path('v1/', include('commerce.urls')),
 ]

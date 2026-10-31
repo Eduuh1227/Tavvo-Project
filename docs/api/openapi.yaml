@@ -699,6 +699,116 @@ paths:
               schema:
                 $ref: '#/components/schemas/PublicMenu'
           description: ''
+  /v1/public/restaurants/{slug}/ordering/:
+    get:
+      operationId: public_restaurants_ordering_retrieve
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - public
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderSettings'
+          description: ''
+  /v1/public/restaurants/{slug}/orders/:
+    post:
+      operationId: public_restaurants_orders_create
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - public
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderInputRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CreateOrderInputRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CreateOrderInputRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderCreated'
+          description: ''
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderCreated'
+          description: ''
+  /v1/public/restaurants/{slug}/orders/{order_id}/:
+    get:
+      operationId: public_restaurants_orders_retrieve
+      parameters:
+      - in: path
+        name: order_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - public
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicOrder'
+          description: ''
+  /v1/public/restaurants/{slug}/orders/{order_id}/checkout/:
+    post:
+      operationId: public_restaurants_orders_checkout_create
+      parameters:
+      - in: path
+        name: order_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - public
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutResult'
+          description: ''
   /v1/restaurants/{restaurant_id}/audit/:
     get:
       operationId: restaurants_audit_list
@@ -725,6 +835,69 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaginatedAuditList'
+          description: ''
+  /v1/restaurants/{restaurant_id}/billing/:
+    get:
+      operationId: restaurants_billing_retrieve
+      parameters:
+      - in: path
+        name: restaurant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - restaurants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingStatus'
+          description: ''
+  /v1/restaurants/{restaurant_id}/billing/checkout/:
+    post:
+      operationId: restaurants_billing_checkout_create
+      parameters:
+      - in: path
+        name: restaurant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - restaurants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutResult'
+          description: ''
+  /v1/restaurants/{restaurant_id}/billing/portal/:
+    post:
+      operationId: restaurants_billing_portal_create
+      parameters:
+      - in: path
+        name: restaurant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - restaurants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutResult'
           description: ''
   /v1/restaurants/{restaurant_id}/categories/:
     get:
@@ -1127,6 +1300,205 @@ paths:
               schema:
                 type: string
                 format: binary
+          description: ''
+  /v1/restaurants/{restaurant_id}/ordering/:
+    get:
+      operationId: restaurants_ordering_retrieve
+      parameters:
+      - in: path
+        name: restaurant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - restaurants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderSettings'
+          description: ''
+    patch:
+      operationId: restaurants_ordering_partial_update
+      parameters:
+      - in: path
+        name: restaurant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - restaurants
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOrderSettingsRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOrderSettingsRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOrderSettingsRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderSettings'
+          description: ''
+  /v1/restaurants/{restaurant_id}/orders/:
+    get:
+      operationId: restaurants_orders_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: Um número de página dentro do conjunto de resultados paginado.
+        schema:
+          type: integer
+      - in: path
+        name: restaurant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - restaurants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrderList'
+          description: ''
+  /v1/restaurants/{restaurant_id}/orders/{id}/:
+    get:
+      operationId: restaurants_orders_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: restaurant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - restaurants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: ''
+  /v1/restaurants/{restaurant_id}/orders/{id}/received-payment/:
+    post:
+      operationId: restaurants_orders_received_payment_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: restaurant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - restaurants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: ''
+  /v1/restaurants/{restaurant_id}/orders/{id}/refund/:
+    post:
+      operationId: restaurants_orders_refund_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: restaurant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - restaurants
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: ''
+  /v1/restaurants/{restaurant_id}/orders/{id}/transition/:
+    post:
+      operationId: restaurants_orders_transition_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: restaurant_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - restaurants
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransitionInputRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TransitionInputRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TransitionInputRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
           description: ''
   /v1/restaurants/{restaurant_id}/products/:
     get:
@@ -1823,6 +2195,38 @@ components:
       description: |-
         * `active` - Active
         * `inactive` - Inactive
+    AddressInputRequest:
+      type: object
+      properties:
+        street:
+          type: string
+          minLength: 1
+          maxLength: 160
+        number:
+          type: string
+          minLength: 1
+          maxLength: 20
+        neighborhood:
+          type: string
+          minLength: 1
+          maxLength: 100
+        city:
+          type: string
+          minLength: 1
+          maxLength: 100
+        postal_code:
+          type: string
+          minLength: 1
+          pattern: ^\d{8}$
+        complement:
+          type: string
+          maxLength: 160
+      required:
+      - city
+      - neighborhood
+      - number
+      - postal_code
+      - street
     Audit:
       type: object
       properties:
@@ -1862,6 +2266,22 @@ components:
       - request_id
       - resource_id
       - resource_type
+    BillingStatus:
+      type: object
+      properties:
+        subscription:
+          $ref: '#/components/schemas/Subscription'
+        available:
+          type: boolean
+        test_mode:
+          type: boolean
+        plan_label:
+          type: string
+      required:
+      - available
+      - plan_label
+      - subscription
+      - test_mode
     Category:
       type: object
       properties:
@@ -1912,6 +2332,75 @@ components:
           type: boolean
       required:
       - name
+    CheckoutResult:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+      required:
+      - url
+    CreateOrderInputFulfillmentEnum:
+      enum:
+      - pickup
+      - delivery
+      - table
+      type: string
+      description: |-
+        * `pickup` - pickup
+        * `delivery` - delivery
+        * `table` - table
+    CreateOrderInputPaymentMethodEnum:
+      enum:
+      - offline
+      - stripe
+      type: string
+      description: |-
+        * `offline` - offline
+        * `stripe` - stripe
+    CreateOrderInputRequest:
+      type: object
+      properties:
+        idempotency_key:
+          type: string
+          format: uuid
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderLineInputRequest'
+        customer_name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        customer_phone:
+          type: string
+          minLength: 1
+          pattern: ^\+?[0-9 ()-]{8,30}$
+        customer_email:
+          oneOf:
+          - type: string
+            format: email
+          - type: string
+            maxLength: 0
+        fulfillment:
+          $ref: '#/components/schemas/CreateOrderInputFulfillmentEnum'
+        delivery_address:
+          $ref: '#/components/schemas/AddressInputRequest'
+        table_code:
+          type: string
+          maxLength: 90
+        notes:
+          type: string
+          maxLength: 500
+        payment_method:
+          $ref: '#/components/schemas/CreateOrderInputPaymentMethodEnum'
+      required:
+      - customer_name
+      - customer_phone
+      - fulfillment
+      - idempotency_key
+      - items
+      - payment_method
     CsrfResult:
       type: object
       properties:
@@ -1969,6 +2458,16 @@ components:
         * `pending` - Pending verification
         * `verified` - Verified
         * `disabled` - Disabled
+    FulfillmentE9aEnum:
+      enum:
+      - pickup
+      - delivery
+      - table
+      type: string
+      description: |-
+        * `pickup` - Retirada
+        * `delivery` - Entrega
+        * `table` - Mesa
     IdentityUser:
       type: object
       properties:
@@ -2201,6 +2700,190 @@ components:
           type: boolean
       required:
       - mfa_enrollment_required
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusD35Enum'
+          readOnly: true
+        fulfillment:
+          allOf:
+          - $ref: '#/components/schemas/FulfillmentE9aEnum'
+          readOnly: true
+        table_label:
+          type: string
+          readOnly: true
+        customer_name:
+          type: string
+          readOnly: true
+        customer_phone:
+          type: string
+          readOnly: true
+        customer_email:
+          type: string
+          format: email
+          readOnly: true
+        delivery_address:
+          readOnly: true
+        notes:
+          type: string
+          readOnly: true
+        currency:
+          type: string
+          readOnly: true
+        subtotal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        delivery_fee:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+        total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        payment_method:
+          allOf:
+          - $ref: '#/components/schemas/PaymentMethod744Enum'
+          readOnly: true
+        payment_status:
+          type: string
+          readOnly: true
+        version:
+          type: integer
+          readOnly: true
+        estimated_minutes:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+          readOnly: true
+      required:
+      - created_at
+      - currency
+      - customer_email
+      - customer_name
+      - customer_phone
+      - delivery_address
+      - delivery_fee
+      - estimated_minutes
+      - fulfillment
+      - id
+      - items
+      - notes
+      - payment_method
+      - payment_status
+      - status
+      - subtotal
+      - table_label
+      - total
+      - updated_at
+      - version
+    OrderCreated:
+      type: object
+      properties:
+        order:
+          $ref: '#/components/schemas/PublicOrder'
+        access_token:
+          type: string
+      required:
+      - access_token
+      - order
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 160
+        quantity:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        unit_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        line_total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+      required:
+      - id
+      - line_total
+      - name
+      - quantity
+      - unit_price
+    OrderLineInputRequest:
+      type: object
+      properties:
+        product_id:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+          maximum: 50
+          minimum: 1
+      required:
+      - product_id
+      - quantity
+    OrderSettings:
+      type: object
+      properties:
+        online_payment_available:
+          type: boolean
+          readOnly: true
+        test_mode:
+          type: boolean
+          readOnly: true
+        accepting_orders:
+          type: boolean
+        pickup_enabled:
+          type: boolean
+        delivery_enabled:
+          type: boolean
+        table_enabled:
+          type: boolean
+        offline_payment_enabled:
+          type: boolean
+        delivery_fee:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        minimum_subtotal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        delivery_postal_prefixes: {}
+        estimated_minutes:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+      required:
+      - online_payment_available
+      - test_mode
     OtpInputRequest:
       type: object
       properties:
@@ -2325,6 +3008,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MenuTable'
+    PaginatedOrderList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
     PaginatedProductList:
       type: object
       required:
@@ -2422,6 +3128,32 @@ components:
           maxLength: 80
         status:
           $ref: '#/components/schemas/ActiveStatusEnum'
+    PatchedOrderSettingsRequest:
+      type: object
+      properties:
+        accepting_orders:
+          type: boolean
+        pickup_enabled:
+          type: boolean
+        delivery_enabled:
+          type: boolean
+        table_enabled:
+          type: boolean
+        offline_payment_enabled:
+          type: boolean
+        delivery_fee:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        minimum_subtotal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        delivery_postal_prefixes: {}
+        estimated_minutes:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
     PatchedPlatformUserUpdateInputRequest:
       type: object
       properties:
@@ -2495,6 +3227,14 @@ components:
           type: object
           additionalProperties:
             type: string
+    PaymentMethod744Enum:
+      enum:
+      - offline
+      - stripe
+      type: string
+      description: |-
+        * `offline` - Na entrega/retirada
+        * `stripe` - Online
     PlatformUserInputRequest:
       type: object
       properties:
@@ -2671,6 +3411,61 @@ components:
       required:
       - categories
       - restaurant
+    PublicOrder:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/StatusD35Enum'
+        fulfillment:
+          $ref: '#/components/schemas/FulfillmentE9aEnum'
+        table_label:
+          type: string
+          maxLength: 80
+        currency:
+          type: string
+          maxLength: 3
+        subtotal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        delivery_fee:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        payment_method:
+          $ref: '#/components/schemas/PaymentMethod744Enum'
+        payment_status:
+          type: string
+          maxLength: 24
+        estimated_minutes:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+          readOnly: true
+      required:
+      - created_at
+      - fulfillment
+      - id
+      - items
+      - payment_method
+      - subtotal
+      - total
     PublicProduct:
       type: object
       properties:
@@ -2876,6 +3671,55 @@ components:
           readOnly: true
       required:
       - updated_at
+    StatusD35Enum:
+      enum:
+      - awaiting_payment
+      - received
+      - accepted
+      - preparing
+      - ready
+      - dispatched
+      - completed
+      - cancelled
+      type: string
+      description: |-
+        * `awaiting_payment` - Aguardando pagamento
+        * `received` - Recebido
+        * `accepted` - Aceito
+        * `preparing` - Em preparo
+        * `ready` - Pronto
+        * `dispatched` - Saiu para entrega
+        * `completed` - Concluído
+        * `cancelled` - Cancelado
+    Subscription:
+      type: object
+      properties:
+        status:
+          type: string
+          maxLength: 32
+        cancel_at_period_end:
+          type: boolean
+        current_period_end:
+          type: string
+          format: date-time
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - updated_at
+    TransitionInputRequest:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/StatusD35Enum'
+        version:
+          type: integer
+          minimum: 1
+      required:
+      - status
+      - version
   securitySchemes:
     cookieAuth:
       type: apiKey

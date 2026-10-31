@@ -10,3 +10,5 @@ cryptography>=44
 argon2-cffi>=23
 gunicorn>=23,<24
 vercel-blob>=0.5,<0.6
+stripe>=16,<17
+vercel-queue>=0.10,<0.11
