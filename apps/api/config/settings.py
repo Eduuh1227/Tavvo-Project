@@ -17,6 +17,9 @@ if os.getenv('VERCEL') == '1':
         host = os.getenv(variable)
         if host:
             ALLOWED_HOSTS.append(host)
+render_host = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+if render_host:
+    ALLOWED_HOSTS.extend([render_host, '127.0.0.1'])
 INSTALLED_APPS = [
     'django.contrib.auth', 'django.contrib.contenttypes', 'django.contrib.sessions',
     'rest_framework', 'drf_spectacular', 'core', 'identity', 'restaurants',
@@ -72,6 +75,9 @@ CSRF_FAILURE_VIEW = 'identity.views.csrf_failure'
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173').split(',')
 if os.getenv('VERCEL') == '1':
     CSRF_TRUSTED_ORIGINS += ['https://' + host for host in ALLOWED_HOSTS if host.endswith('.vercel.app')]
+if render_host:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{render_host}')
+if os.getenv('VERCEL') == '1' or render_host:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_SSL_REDIRECT = os.getenv('DJANGO_HTTPS_REDIRECT', 'false').lower() == 'true'
@@ -79,7 +85,7 @@ SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
 SECURE_HSTS_INCLUDE_SUBDOMAINS = False
 SECURE_REFERRER_POLICY = 'same-origin'
 TAVVO_MFA_ENCRYPTION_KEY = os.environ['TAVVO_MFA_ENCRYPTION_KEY']
-deployment_host = os.getenv('VERCEL_URL') or os.getenv('VERCEL_BRANCH_URL')
+deployment_host = os.getenv('VERCEL_URL') or os.getenv('VERCEL_BRANCH_URL') or render_host
 deployment_origin = f'https://{deployment_host}' if deployment_host else None
 TAVVO_ADMIN_ORIGIN = os.getenv('TAVVO_ADMIN_ORIGIN', deployment_origin or 'http://localhost:5173')
 TAVVO_PUBLIC_ORIGIN = os.getenv('TAVVO_PUBLIC_ORIGIN', deployment_origin or 'http://localhost:3000')

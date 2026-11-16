@@ -4,6 +4,8 @@ SaaS multi-tenant para restaurantes: cardápio digital, pedidos e entrega manual
 
 **Stripe: totalmente pendente, com trabalho suspenso por decisão do proprietário em 16/11/2026.** O código e as evidências anteriores de sandbox ficam preservados como histórico; pagamentos online, assinaturas e recebimentos pela Stripe não contam como entregas concluídas. Ver [status da integração](docs/commerce-demo.md).
 
+Para publicar a demonstração fora da Vercel, veja o [guia de deploy no Render](docs/deploy-render.md).
+
 Demonstração pública: [tavvo-demo.vercel.app](https://tavvo-demo.vercel.app). O painel exige login. Pagamentos são exclusivamente de teste; envio real de e-mail foi adiado pelo responsável. Consulte [operação do comércio](docs/commerce-demo.md).
 
 ## Executar localmente
