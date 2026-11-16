@@ -1,5 +1,11 @@
 # Pedidos, delivery e Stripe de teste
 
+## Status atual — 16/11/2026
+
+Por decisão do proprietário, o trabalho com a Stripe está suspenso e a integração deve ser considerada **totalmente pendente** no planejamento do produto. Pagamentos online, assinaturas pela Stripe, Connect e recebimento pelos restaurantes ficam fora das entregas concluídas até nova autorização para retomar.
+
+O código e os testes de sandbox descritos abaixo são histórico técnico preservado, não conclusão dessa integração. Esta alteração de planejamento não exclui contas, recursos ou credenciais, nem desativa o checkout de teste já publicado. Não retomar configuração, implantação ou ativação da Stripe sem solicitação do proprietário.
+
 No painel do gestor, **Entrega e retirada** configura recebimento, modalidades, taxa, pedido mínimo, prazo e prefixos de CEP. **Pedidos** acompanha os pedidos e permite avançar status, confirmar pagamento presencial e pedir estorno online. Funcionários podem operar pedidos, mas não alterar a política, contratar assinatura ou estornar.
 
 O cliente adiciona produtos no cardápio, informa os dados necessários e acompanha o pedido na mesma aba. Pedidos de mesa exigem o QR ativo daquela mesa. O token fica no sessionStorage; fechar a sessão do navegador pode perder o acesso ao acompanhamento. Dados de cartão são preenchidos somente no checkout hospedado da Stripe.
