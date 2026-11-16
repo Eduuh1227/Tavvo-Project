@@ -26,6 +26,8 @@
     {"source": "/ready/", "destination": {"service": "api"}},
     {"source": "/r/(.*)", "destination": {"service": "menu"}},
     {"source": "/q/(.*)", "destination": {"service": "menu"}},
+    {"source": "/oficina", "destination": {"service": "menu"}},
+    {"source": "/oficina/(.*)", "destination": {"service": "menu"}},
     {"source": "/_next/(.*)", "destination": {"service": "menu"}},
     {"source": "/(.*)", "destination": {"service": "admin"}}
   ]

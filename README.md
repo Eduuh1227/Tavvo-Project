@@ -25,6 +25,8 @@ O PostgreSQL e o S3 local têm volumes persistentes. A API usa uma role sem prop
 
 ## Estrutura
 
+O template automotivo está em `http://localhost:3000/oficina`, com oficina e catálogo fictícios, busca por nome/código, filtros e preparação de orçamento. Os dados de exemplo ficam em `apps/public-reference/app/oficina/catalog.ts`. Para abrir mensagens no WhatsApp, configure `TAVVO_WORKSHOP_WHATSAPP` no servidor Next com DDI e número, somente dígitos, e reinicie o site. Sem esse número, a demonstração permite visualizar e copiar a mensagem. O catálogo dessa primeira versão é definido em código e ainda não possui gestão pelo painel. A fotografia está creditada no rodapé.
+
 - `apps/api`: identidade/MFA, restaurantes, catálogo, publicação, mesas/QR, pedidos, cobrança de teste e auditoria.
 - `apps/admin`: painéis Tavvo e restaurante em React/Vite.
 - `apps/public-reference`: site Next.js alimentado pela API pública.

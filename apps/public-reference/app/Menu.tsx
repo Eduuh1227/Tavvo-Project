@@ -8,7 +8,7 @@ function money(price:string,currency:string):string {
 }
 export function Menu({data,table,tableCode}:{data:PublicMenu;table?:string;tableCode?:string}){
   const settings=data.restaurant.settings;const config=settings?.public_config || {};
-  return <main className="menu-page"><OrderingProvider key={data.restaurant.slug} slug={data.restaurant.slug} tableCode={tableCode}>
+  return <><main className="menu-page"><OrderingProvider key={data.restaurant.slug} slug={data.restaurant.slug} tableCode={tableCode}>
     <header className="restaurant-header">
       <p className="menu-eyebrow">Cardápio digital</p>
       <h1>{data.restaurant.name}</h1>
@@ -45,5 +45,5 @@ export function Menu({data,table,tableCode}:{data:PublicMenu;table?:string;table
         </section>)}
       </div>
     </>:<p className="menu-empty">O restaurante ainda não publicou seu cardápio.</p>}
-  </OrderingProvider></main>;
+  </OrderingProvider></main><footer className="menu-footer"><span>Cardápio digital</span><span className="footer-platform">Tavvo Restaurants</span></footer></>;
 }
